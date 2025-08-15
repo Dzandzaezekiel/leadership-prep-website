@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leadership Prep – August Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Royal Blue, Gold, White, Light Gray -->
+    <!-- Application Structure Plan: A single-page, top-to-bottom narrative flow was chosen to guide the user logically from initial impact (Hero) to detailed information (Outline, Speakers) and finally to action (CTA). This linear structure is intuitive for an event page, ensuring users receive all key information before being prompted to join. Interactive elements like the timeline and scroll animations are layered on top to create engagement without disrupting the user's journey. -->
+    <!-- Visualization & Content Choices: 
+        - Hero Section -> Goal: Immediate Impact -> Viz: Full-screen image with parallax -> Interaction: CTA button -> Justification: Creates a professional and engaging first impression.
+        - Post-Event Status -> Goal: Inform users the event is over -> Viz: Updated text and CTA -> Interaction: Link to replay -> Justification: Provides clear next steps for visitors after the event has concluded.
+        - Program Outline -> Goal: Inform on schedule -> Viz: Interactive vertical timeline -> Interaction: Click-to-expand details -> Justification: Presents dense information cleanly, allowing users to explore details on demand.
+        - Constitution AI -> Goal: Provide expert answers -> Viz: Q&A interface -> Interaction: User question triggers RAG call to Gemini -> Justification: Creates a powerful, interactive tool for deep engagement with the source document.
+        - Email & Feedback Capture -> Goal: Build lists and allow admin viewing -> Viz: Input forms and hidden admin panels -> Interaction: Saves data to Firebase Firestore; admin links fetch and display collections -> Justification: A real-world, scalable solution for data collection and admin review.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #1a202c;
+        }
+        .hero {
+            background-image: url('https://i.postimg.cc/fTwRnvzp/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Parallax effect */
+        }
+        .royal-blue-bg { background-color: #1D4E89; }
+        .gold-bg { background-color: #F4C542; }
+        .gold-text { color: #F4C542; }
+        .royal-blue-text { color: #1D4E89; }
+        .timeline-item-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .timeline-item.open .timeline-item-content {
+            max-height: 200px;
+            padding-top: 1rem;
+        }
+        .timeline-item.open .timeline-icon {
+            transform: rotate(135deg);
+            background-color: #F4C542;
+            color: #1D4E89;
+        }
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .gallery-img {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1D4E89;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-container {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Firebase Setup Warning -->
+    <div id="firebase-warning" class="hidden sticky top-0 z-50 bg-red-500 text-white text-center p-3">
+        <strong>Action Required:</strong> Firebase is not configured. Please paste your project credentials in the HTML file to enable database features.
+    </div>
+
+    <!-- Audio Toggle -->
+    <button id="audio-toggle" class="fixed bottom-5 right-5 z-50 w-12 h-12 rounded-full royal-blue-bg text-white flex items-center justify-center shadow-lg focus:outline-none">
+        <span id="audio-icon">🔇</span>
+    </button>
+    <audio id="background-music" loop>
+        <!-- Add your music file source here, e.g., <source src="your-music.mp3" type="audio/mpeg"> -->
+    </audio>
+
+    <!-- Hero Section -->
+    <section class="hero h-screen flex items-center justify-center text-white text-center p-4">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="relative z-10 fade-in-section is-visible">
+            <h1 class="text-4xl md:text-7xl font-black uppercase">Leadership Prep</h1>
+            <h2 class="text-2xl md:text-4xl font-bold gold-text mb-4">August Edition</h2>
+            <p class="max-w-3xl mx-auto md:text-xl mb-6">Building Kingdom Leaders: Understanding Our Calling, Embracing Our Constitution</p>
+            <p class="text-xl md:text-2xl font-semibold mb-8">Event Concluded on 14th August 2025</p>
+        </div>
+    </section>
+
+    <!-- Program Outline Section -->
+    <section id="outline" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 fade-in-section">
+                <h2 class="text-4xl font-bold royal-blue-text">Program Outline</h2>
+                <p class="text-gray-600 mt-2">An hour of inspiration, learning, and interaction.</p>
+            </div>
+            <div class="max-w-3xl mx-auto">
+                <div class="relative">
+                    <div class="border-l-2 border-gray-200 absolute h-full left-4 md:left-1/2 md:-translate-x-1/2"></div>
+                    <div id="timeline-container" class="space-y-12"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Speakers Section -->
+    <section id="speakers" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 fade-in-section">
+                <h2 class="text-4xl font-bold royal-blue-text">Meet The Speakers</h2>
+                <p class="text-gray-600 mt-2">Wisdom and insights from dedicated leaders.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Speaker Card 1 -->
+                <div class="text-center bg-white rounded-lg shadow-lg p-6 transform hover:-translate-y-2 transition-transform duration-300 fade-in-section">
+                    <img src="https://i.postimg.cc/3rpXqtyh/rev-ezekiel.jpg" alt="Rev. Ezekiel Razak Alhassan" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-gray-200 object-cover">
+                    <h3 class="text-xl font-bold royal-blue-text">Rev. Ezekiel Razak Alhassan</h3>
+                    <p class="gold-text font-semibold mb-2">Youth & NUBS Coordinator</p>
+                    <p class="text-gray-600 mb-4">Passionate about equipping young leaders for impactful service.</p>
+                    <a href="https://wa.me/233244447115" target="_blank" class="inline-block bg-green-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-green-600 transition-colors">Contact on WhatsApp</a>
+                </div>
+                <!-- Speaker Card 2 -->
+                <div class="text-center bg-white rounded-lg shadow-lg p-6 transform hover:-translate-y-2 transition-transform duration-300 fade-in-section">
+                    <img src="https://i.postimg.cc/sXxnS7KX/ps-bernard1.jpg" alt="Mr. Bernard Adu-Gyamfi" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-gray-200 object-cover">
+                    <h3 class="text-xl font-bold royal-blue-text">Mr. Bernard Adu-Gyamfi</h3>
+                    <p class="gold-text font-semibold mb-2">Ministry Strategist & Leadership Mentor</p>
+                    <p class="text-gray-600 mb-4">Years of experience in Christian youth development.</p>
+                    <a href="https://wa.me/233242118627" target="_blank" class="inline-block bg-green-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-green-600 transition-colors">Contact on WhatsApp</a>
+                </div>
+                <!-- Speaker Card 3 -->
+                <div class="text-center bg-white rounded-lg shadow-lg p-6 transform hover:-translate-y-2 transition-transform duration-300 fade-in-section">
+                    <img src="https://i.postimg.cc/fyxY0b4y/Ezekiel1.jpg" alt="Mr. Ezekiel K. Dzandza" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-gray-200 object-cover">
+                    <h3 class="text-xl font-bold royal-blue-text">Mr. Ezekiel K. Dzandza</h3>
+                    <p class="gold-text font-semibold mb-2">RDC Chairman & Host</p>
+                    <p class="text-gray-600 mb-4">Focused on strengthening the link between Kingdom purpose and practical leadership.</p>
+                    <a href="https://wa.me/233245413116" target="_blank" class="inline-block bg-green-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-green-600 transition-colors">Contact on WhatsApp</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Constitution AI Section -->
+    <section id="constitution-ai" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4 text-center fade-in-section">
+            <h2 class="text-4xl font-bold royal-blue-text">✨ Explore the Constitution with AI</h2>
+            <p class="text-gray-600 mt-2 mb-8 max-w-2xl mx-auto">Have a question about the Youth Ministry's constitution? Ask our AI assistant for a clear answer based directly on the official document.</p>
+            <div class="max-w-xl mx-auto">
+                <div class="bg-white p-2 rounded-lg shadow-lg mb-4 border border-gray-200">
+                    <textarea id="constitution-question" rows="3" placeholder="e.g., What are the duties of a youth leader?" class="w-full bg-transparent p-2 text-gray-700 focus:outline-none resize-none placeholder-gray-400"></textarea>
+                </div>
+                <button id="ask-constitution-btn" class="gold-bg text-gray-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-400 transition-colors">Ask Question</button>
+                <div id="constitution-output" class="bg-white p-6 rounded-lg shadow-inner min-h-[100px] text-left hidden mt-6">
+                    <div id="constitution-loader" class="loader mx-auto hidden"></div>
+                    <p id="constitution-answer" class="text-gray-600"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Takeaways Section -->
+    <section id="takeaways" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 fade-in-section">
+                <h2 class="text-4xl font-bold royal-blue-text">Key Takeaways</h2>
+                <p class="text-gray-600 mt-2">Core principles from our session on Kingdom Leadership.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="bg-white p-6 rounded-lg shadow-lg fade-in-section">
+                    <h3 class="font-bold text-lg royal-blue-text mb-2">Leadership Begins with Calling</h3>
+                    <p class="text-gray-600">Every Kingdom leader must first understand why they are called before what they are to do.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg fade-in-section">
+                    <h3 class="font-bold text-lg royal-blue-text mb-2">The Constitution is Our Compass</h3>
+                    <p class="text-gray-600">It provides direction, clarity, and unity for the youth ministry’s mission.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg fade-in-section">
+                    <h3 class="font-bold text-lg royal-blue-text mb-2">Vision Fuels Purpose</h3>
+                    <p class="text-gray-600">Without vision, leadership drifts; with vision, leaders move with intentionality.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg fade-in-section lg:col-start-2">
+                    <h3 class="font-bold text-lg royal-blue-text mb-2">Biblical Foundation is Non-Negotiable</h3>
+                    <p class="text-gray-600">True leadership must be rooted in God’s Word, not just human ideas.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg fade-in-section">
+                    <h3 class="font-bold text-lg royal-blue-text mb-2">Unity Strengthens Impact</h3>
+                    <p class="text-gray-600">When leaders align with the same Spirit and mission, their influence multiplies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Comments and Questions Section -->
+    <section id="feedback" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4 text-center fade-in-section">
+            <h2 class="text-4xl font-bold royal-blue-text">Have a Question or Comment?</h2>
+            <p class="text-gray-600 mt-2 mb-8 max-w-2xl mx-auto">We'd love to hear from you. Share your thoughts, questions, or feedback about the session below.</p>
+            <div id="feedback-container" class="max-w-xl mx-auto">
+                <div id="feedback-form">
+                    <div class="bg-white p-2 rounded-full shadow-lg mb-4">
+                        <input type="text" id="feedback-name" placeholder="Your Name (Optional)" class="w-full bg-transparent p-2 text-gray-700 focus:outline-none">
+                    </div>
+                    <div class="bg-white p-2 rounded-lg shadow-lg mb-4">
+                        <textarea id="feedback-text" rows="4" placeholder="Your question or comment..." class="w-full bg-transparent p-2 text-gray-700 focus:outline-none resize-none"></textarea>
+                    </div>
+                    <button id="submit-feedback-btn" class="gold-bg text-gray-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-400 transition-colors">Submit Feedback</button>
+                </div>
+                <p id="feedback-success" class="text-green-600 mt-4 text-xl hidden">Thank you for your feedback!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prepare for Part 2 Section -->
+    <section id="part2" class="py-20">
+        <div class="container mx-auto px-4 text-center fade-in-section">
+            <h2 class="text-4xl font-bold royal-blue-text">Coming Up: Part 2</h2>
+            <p class="text-xl text-gray-500 mt-2 mb-2 gold-text font-bold">Leadership & Governance Essentials</p>
+            <p class="text-lg text-gray-700 font-semibold mb-4">21st August, 2025</p>
+            <p class="max-w-2xl mx-auto text-gray-600 mb-8">
+                <strong>Objective:</strong> To explain the practical Structure, Roles, and Expectations for Youth Leaders under the Constitution.
+            </p>
+            <div id="notify-container" class="max-w-md mx-auto">
+                <div id="notify-form">
+                    <div class="bg-white p-2 rounded-full shadow-lg mb-4">
+                        <input type="email" id="notify-email" placeholder="Enter your email for a reminder" class="w-full bg-transparent p-2 text-gray-700 focus:outline-none">
+                    </div>
+                    <div class="bg-white p-2 rounded-full shadow-lg">
+                        <input type="tel" id="notify-whatsapp" placeholder="WhatsApp Number (Optional)" class="w-full bg-transparent p-2 text-gray-700 focus:outline-none">
+                    </div>
+                    <button id="notify-btn" class="gold-bg text-gray-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-400 transition-colors mt-4">Notify Me</button>
+                </div>
+                <p id="notify-success" class="text-green-600 mt-4 hidden">Thank you! We'll notify you about Part 2.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section id="cta" class="py-20 royal-blue-bg text-white">
+        <div class="container mx-auto px-4 text-center fade-in-section">
+            <h2 class="text-4xl md:text-5xl font-black">Thanks For Joining Us!</h2>
+            <p class="text-xl mt-4 mb-8">Review the session with the full video replay or read the summary.</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button id="open-replay-btn-2" class="gold-bg text-gray-900 font-bold py-4 px-10 rounded-full text-lg uppercase hover:bg-yellow-400 transition-colors duration-300">Watch Full Replay</button>
+                <button id="open-transcript-btn" class="border-2 border-white text-white font-bold py-4 px-10 rounded-full text-lg uppercase hover:bg-white hover:text-royal-blue-bg transition-colors duration-300">Read Meeting Summary</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Announcements Section -->
+    <section id="announcements" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 fade-in-section">
+                <h2 class="text-4xl font-bold royal-blue-text">Announcements</h2>
+                <p class="text-gray-600 mt-2">Get involved and have your say!</p>
+            </div>
+            <div class="max-w-6xl mx-auto">
+                <div class="mb-12 fade-in-section">
+                    <img src="https://i.postimg.cc/Pr2rt8Nx/survery.jpg" alt="Survey Announcement" class="w-full h-auto rounded-lg shadow-lg object-cover">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Survey 1 Card -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg fade-in-section">
+                        <h3 class="font-bold text-xl primary-text mb-4">Youth Voice in Operation 2000 by 2030</h3>
+                        <p class="text-gray-600 mb-6">The Ghana Baptist Convention has embarked on an ambitious journey to increase our churches to 2,000. Your voice is critical to this vision. Please take a few moments to complete this survey.</p>
+                        <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__m1FE-ZURE5aMlRWNTFMTDlKV0pCN042UkNaVVY2SC4u" target="_blank" class="inline-block gold-bg text-gray-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-400 transition-colors">Take the Survey</a>
+                    </div>
+                    <!-- Survey 2 Card -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg fade-in-section">
+                        <h3 class="font-bold text-xl primary-text mb-4">Register for the National Congress!</h3>
+                        <p class="text-gray-600 mb-6">Registration for the Ghana Baptist Youth National Congress/Conference is now open! Secure your spot for this powerful time of worship, learning, fellowship, and fun.</p>
+                        <a href="https://forms.office.com/r/g65bWDhTdv" target="_blank" class="inline-block gold-bg text-gray-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-400 transition-colors">Register Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-gray-800 text-gray-400">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="https://web.facebook.com/p/Ghana-Baptist-Youth-Ministry-61568425853681/?_rdc=1&_rdr#" target="_blank" class="hover:text-white transition-colors">Facebook</a>
+            </div>
+            <p>#LeadershipPrep #KingdomLeaders</p>
+            <div class="mt-4 space-x-4">
+                <a href="#" id="view-submissions-btn" class="text-sm text-gray-500 hover:gold-text">View Signups</a>
+                <a href="#" id="view-feedback-btn" class="text-sm text-gray-500 hover:gold-text">View Feedback</a>
+            </div>
+            <div id="submissions-container" class="hidden mt-4 max-w-md mx-auto bg-gray-700 p-4 rounded-lg text-left">
+                <h4 class="font-bold text-white mb-2">Signups for Part 2:</h4>
+                <div id="submissions-list" class="space-y-2 text-gray-300">
+                   <p>Loading...</p>
+                </div>
+            </div>
+            <div id="feedback-list-container" class="hidden mt-4 max-w-md mx-auto bg-gray-700 p-4 rounded-lg text-left">
+                <h4 class="font-bold text-white mb-2">Feedback & Questions:</h4>
+                <div id="feedback-list" class="space-y-2 text-gray-300">
+                   <p>Loading...</p>
+                </div>
+            </div>
+            <p class="mt-4 text-sm">&copy; 2025 Leadership Prep. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Video Replay Modal -->
+    <div id="replay-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-container bg-black rounded-lg shadow-2xl w-full max-w-4xl transform scale-95">
+            <div class="flex justify-end p-2">
+                <button id="close-replay-btn" class="text-white hover:text-gray-300 text-3xl">&times;</button>
+            </div>
+            <div class="aspect-w-16 aspect-h-9">
+                <iframe id="video-iframe" class="w-full h-[50vh]" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transcript Modal -->
+    <div id="transcript-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-container bg-white text-gray-800 rounded-lg shadow-2xl w-full max-w-3xl transform scale-95">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200">
+                <h3 class="text-2xl font-bold primary-text">Meeting Summary</h3>
+                <button id="close-transcript-btn" class="text-gray-400 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="transcript-content" class="p-6 max-h-[70vh] overflow-y-auto text-gray-600">
+                <!-- Transcript text will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+        // --- IMPORTANT: PASTE YOUR FIREBASE CONFIGURATION HERE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFh7m--bfFU0uGUKp5cO0K86peUovSFRg",
+            authDomain: "leadership-prep-august-edition.firebaseapp.com",
+            projectId: "leadership-prep-august-edition",
+            storageBucket: "leadership-prep-august-edition.appspot.com",
+            messagingSenderId: "369037357054",
+            appId: "1:369037357054:web:600439f1b453132b6c1aaf",
+            measurementId: "G-3HVDW3TGBC"
+        };
+        // ---------------------------------------------------------
+        
+        // --- IMPORTANT: PASTE THE FULL TEXT OF THE CONSTITUTION HERE ---
+        const constitutionText = `
+            1
+2
+TABLE OF CONTENTS
+Contents
+TABLE OF CONTENTS ............................................................................................................ 2
+TABLE OF FIGURES ................................................................................................................ 3
+PREAMBLE................................................................................................................................ 5
+ARTICLE 1: ESTABLISHMENT AND NAME .................................................................... 6
+ARTICLE 2: SUPREMACY OF THE YOUTH MINISTRY................................................. 6
+ARTICLE 3: DECLARATION OF BELIEFS & PRINCIPLES ............................................ 7
+ARTICLE 4: AIMS & OBJECTIVES..................................................................................... 7
+ARTICLE 5: MEMBERSHIP ................................................................................................. 8
+Section I: Qualification ........................................................................................................ 8
+Section II: Procedure of Membership .............................................................................. 8
+Section III: Cessation of Membership ............................................................................... 9
+Section IV: Age Limit ............................................................................................................. 9
+Section V: Financing & Funding of the Youth Ministry ................................................ 9
+ARTICLE 6: STRUCTURE .................................................................................................. 11
+Section I: Auxiliary Structure of the Youth Ministry ..................................................... 11
+Section II: Vertical and Horizontal Structure of the Youth Ministry ......................... 12
+Section III: The Structure of the Baptist Young Men and Baptist Young Ladies . 14
+Section IV: The Structure of the National Union of Baptist Students (NUBS) ....... 14
+ARTICLE 7: OFFICERS....................................................................................................... 15
+Section I: Desirable Spiritual, Moral, and Ethical Qualities for Officers ................ 15
+a. Special Election Clause: ............................................................................................ 17
+Section II: Elected and Mandated Officers ................................................................. 17
+a. Qualifications for President and Vice President ................................................. 18
+b. Roles, Functions, and Qualifications of Officers ................................................. 19
+Special Executive/Governance Clause/Caveat: ........................................................ 25
+Section III: National Executive Officers (NEO) ............................................................. 26
+ARTICLE 8: GOVERNANCE AND ADMINISTRATIVE SUPPORT .............................. 27
+ARTICLE 9: COMMITTEES ............................................................................................... 28
+Section I: Standing Committees ..................................................................................... 28
+Section II: Duties and Responsibilities of Committees ............................................... 29
+Section III: Ad-hoc Committees ...................................................................................... 36
+ARTICLE 10: ELECTION AND APPOINTMENT OF OFFICERS .................................... 37
+3
+Section I: Nominating & Elections (N&E) Committee ............................................... 37
+Section II: Elections of Officers ......................................................................................... 39
+Section III: Induction Ceremony & Handing Over ..................................................... 40
+Section IV: Removal from Office ..................................................................................... 40
+ARTICLE 11: STATUTORY PROGRAMS & ACTIVITIES .............................................. 41
+Section I: Operations .......................................................................................................... 41
+Section II: Executive Officers and Council Meetings ................................................ 42
+Section III: National Youth Conference ........................................................................ 42
+Section IV: National Youth Delegates Congress ........................................................ 43
+Section V: Standing Orders ............................................................................................... 43
+ARTICLE 12: CODE OF DISCIPLINE ................................................................................ 44
+ARTICLE 13: CODE OF PRACTICE .................................................................................. 45
+Section I: Bank Account .................................................................................................... 45
+Section II: Transparency and Accountability of National Executive Officers .... 46
+ARTICLE 14: AMENDMENTS ............................................................................................ 47
+Article 14: Commencement ...................................................................................................... 47
+SCHEDULE .............................................................................................................................. 48
+Section 1: Duties and Responsibilities of National Executive Officers (NEO) ...... 48
+CONSTITUTIONAL NOTES .................................................................................................. 55
+Section I: Educational and Professional Qualifications for Officers ...................... 55
+Section II: The Merged Role of the Organizing, Prayer, and Evangelism Secretary 57
+Section III: Spiritual and Community Outreach Committee ................................... 59
+TABLE OF FIGURES
+Figure 1: The Auxiliary and Sunday School Chart of the Christian Education Department of the Ghana Baptist Convention ................................................... 11
+Figure 2: Vertical and Horizontal Structure of the Youth Ministry ........................ 12
+Figure 3: Elected Officers Across the Horizontal Levels of the Youth Ministry .... 15
+4
+5
+PREAMBLE
+We, the members of the National Youth Ministry of the Ghana Baptist Convention, the umbrella body of local Baptist Churches in and outside Ghana, united by our faith in Jesus Christ, do hereby establish this constitution to guide our fellowship and ministry for the purpose of:
+1.
+Preserving the principles of our faith based solely on the Scriptures in accordance with the beliefs, practices, and constitution of the Ghana Baptist Convention and its allied bodies;
+2.
+Seeking the spiritual and general wellbeing of our members and allied groups;
+3.
+Promoting fellowship amongst members and allied groups;
+4.
+Providing a guide for the smooth running and administration of the ministry;
+Do hereby adopt this document as the; CONSTITUTION OF THE YOUTH MINISTRY OF THE GHANA BAPTIST CONVENTION.
+6
+ARTICLE 1: ESTABLISHMENT AND NAME
+There is hereby established a body to be known, called, and addressed as; THE NATIONAL YOUTH MINISTRY OF THE GHANA BAPTIST CONVENTION hereafter in this constitution referred to as the; ‘THE YOUTH MINISTRY.’
+ARTICLE 2: SUPREMACY OF THE YOUTH MINISTRY
+1.
+The National Youth Ministry of the Ghana Baptist Convention shall be the supreme body under which all Youth Organizations (Foreign and Local) of the Ghana Baptist Convention shall be put together in unity as exemplified by our Lord Jesus Christ.
+2.
+All youth groups: foreign or local, youth churches or person(s) between the age of seventeen to thirty-five (17-35) years (whether married or not) deriving its membership or affiliation from the National Youth Ministry of the Ghana Baptist Convention shall be subject to all decisions and policy directives of the Executive Body and the Annual Gathering (Conference/Congress) when duly put in session.
+3.
+In view of this, no such body or person(s) deriving its membership from this Youth Ministry shall run any parallel organization that contradicts the statutes, beliefs and activities of this body. Any culprit in this sense shall be duly referred to the Disciplinary Committee so set by this constitution to adjudicate on such matters.
+4.
+The Constitution shall subscribe to the articles of faith of the Ghana Baptist Convention on which the Youth Ministry has been founded and shall be the underlying principles for all decision-making and operations of the ministry.
+5.
+The Constitution shall embody the regulations that establish the manner and limits within which the Youth Ministry shall be governed and administered.
+7
+ARTICLE 3: DECLARATION OF BELIEFS & PRINCIPLES
+We associate ourselves with the polity and beliefs of the Ghana Baptist Convention and its allied bodies. Our polity thereby is in accordance with the Ghana Baptist Convention polity as follows:
+The government of the Youth Ministry is vested in the body, but it recognizes and sustains the obligations of mutual counsel and co-operation which are common among Baptist Churches and Youth Ministries. Final decisions on all major matters shall be decided by the membership and leadership of the Youth Ministry.
+ARTICLE 4: AIMS & OBJECTIVES
+The objectives of the National Youth Ministry shall be as follows:
+1.
+To seek and promote the spiritual and physical growth amongst all members and member groups.
+2.
+To co-operate with the Ghana Baptist Convention and other allied bodies in emphasizing its declared principles among all member groups to promote Baptist work in Ghana and globally.
+3.
+To develop and build members to serve in the purposes of man as; Worship-Centre of Life, Fellowship-Sharing/Love, Discipleship-Being Like Christ, Ministry-Service and Evangelism-Spreading Christ.
+4.
+To assist in the empowerment and development of talents and skills of members so as to manifest the glory of God on this earth through their personal purpose and gifts (Life empowerment).
+5.
+To plan and formulate policies and initiatives for the general administration of the Youth Ministry.
+8
+ARTICLE 5: MEMBERSHIP
+Section I: Qualification
+The National Youth Ministry shall consist of all organized (and registered) Baptist Youth fellowships within the Baptist Youth Associations under the Ghana Baptist Convention, which follow the principles, practices, and beliefs of the Ghana Baptist Convention and the Youth Ministry.
+Section II: Procedure of Membership
+A Youth Fellowship seeking membership into the National Youth Ministry shall:
+1.
+Belong to a church that is a member of the Ghana Baptist Convention.
+2.
+Be an active member of a Baptist Youth Association within the area or locality in which it is found.
+3.
+Membership into the Youth Ministry shall be open to all youth groups; foreign or local, youth churches or person(s) between the age of seventeen to thirty-five (17-35) years (whether married or not) whose local church or parent/mother body has obtained its membership or affiliation to the Ghana Baptist Convention.
+4.
+Such groups/persons from clause (3) above shall be officially registered with the National Office of the Youth Ministry through the Youth Association leadership of their respective area or the Parent Association leadership (where applicable).
+5.
+The Constitution recognizes every youth group/fellowship of the member churches of the Ghana Baptist Convention.
+6.
+Youth groups/fellowships that faithfully pay their dues and any other subscriptions agreed upon, shall be deemed to be in good standing.
+9
+Section III: Cessation of Membership
+Membership may be ceased, and the said body or church be deemed as an inactive member when:
+1.
+It fails to pay dues and/or subscriptions for a period of two (2) consecutive years.
+2.
+It fails to participate in the Ministry’s National programs and activities for a period of two (2) consecutive years without written notice to the NEO.
+3.
+Where the local church or parent/mother body is withdrawn or sanctioned from the Ghana Baptist Convention and its allied bodies.
+In the event of cessation of membership, a member in that church or Association shall be ineligible to serve as a National Officer, Advisory Council and/or Committee member. However, this shall not apply to already serving national officers, advisory council and/or committee members.
+Section IV: Age Limit
+1.
+The Youth Ministry membership shall be open to Baptists between the age of seventeen and thirty-five (17-35) years, whether married or not.
+2.
+The Youth Ministry shall endeavor to adhere strictly to this age limit in its election of officers and appointment of Officers at all levels.
+3.
+A person who is married and within the age limit and who desires to be identified with the Youth Ministry may do so and shall be eligible for electoral appointment.
+Section V: Financing & Funding of the Youth Ministry
+1.
+The Youth Ministry at the local church level shall be financed primarily by and through the payment of dues by members and spport from the local chruch.
+2.
+The Youth Ministry at the National and Association levels shall be financed primarily by and through the payment of subscriptions by the local church youth ministries through the Association level.
+10
+3.
+The Youth Ministry shall also be financed and funded by and through donations, sponsorships, fundraising, merchandizing, grants, and loans/pre-financing (excluding borrowing from a financial institution).
+4.
+Dues may be reviewed annually or as decided at Annual Gathering (Conference/Congress/Council) and association’s business gathering, respectively.
+5.
+National and association subscriptions shall be reviewed periodically at and by the Annual Gathering (Conference/Congress/Council) and association’s business gathering, respectively.
+11
+ARTICLE 6: STRUCTURE
+Figure 1: The Auxiliary and Sunday school Chart of the Christian Education Department of the Ghana Baptist Convention
+Section I: Auxiliary Structure of the Youth Ministry
+The overall structure of the Youth Ministry is derived from the Auxiliary Structure of the Ghana Baptist Convention as shown in Figure 1 above.
+The Youth Ministry principally covers the age range from 17 to 35 years, whether single or married.
+The Youth Ministry, at its core and all levels, is a combination of young men and ladies within the above-specified age range.
+12
+Additionally, the Youth Ministry is further sub-divided into sub-groups, specifically:
+•
+Baptist Young Men (BYM)
+•
+Baptist Young Ladies (BYL), and the
+•
+National Union of Baptist Students (NUBS)
+The above sub-groups have a reporting structure to the overall Youth Ministry across all Levels. Subsequently, the specific sub-groups have an additional matrix reporting structure to the Apex Auxiliaries of the Baptist Men’s Ministry (BMM) and the Women’s Missionary Union (WMU), while the National Union of Baptist Students report to the National Youth & NUBS Coordinator respectively.
+Section II: Vertical and Horizontal Structure of the Youth Ministry
+Figure 2: Vertical and Horizontal Structure of the Youth Ministry
+Note: SC = Students Coordinator, *** - Per the need of the local church
+A.
+Vertical Structure of the Youth Ministry
+The Youth Ministry, from the vertical level, shall be operated principally at:
+•
+The National Level
+•
+The Sector Level
+•
+The Association Level, and
+•
+The Local Church Level.
+Where applicable, this vertical structure may be supported by the following sub-level:
+•
+The Zonal Sub-level supports the Association Level.
+13
+The Sector Coordinator shall appoint youth members in consultation with the Association Presidents in the Sector to serve in the following capacities to assist the work of the Sector Executive Committee (EC):
+•
+General Secretary
+•
+Financial Secretary
+•
+Organizing, Prayer & Evangelism Secretary
+The Association Executive Committee (EC) may appoint youth members in consultation with the local youth leaders in each respective zone to serve as zonal leaders to assist the work of the Association.
+B.
+Associations
+1.
+For the purposes of decentralization, effective coordination, monitoring, administration, and increasing fellowship amongst member churches; The Youth Ministry shall by the Ghana Baptist Convention’s regional demarcated structure shall form Youth Associations. The name and structure shall be amenable to the Ghana Baptist Convention’s changes in structure.
+2.
+Every individual youth member shall be a direct member of its localized Association.
+3.
+Where applicable, each Association will set up zonal groupings for similar purposes.
+4.
+Each Association shall have a matrix reporting to the Youth Sector Representative (at the national level) and Association Head (at the Association Level).
+5.
+The Association shall have the following functions:
+a.
+To encourage the establishment of youth fellowships within the churches of its locality.
+b.
+To strengthen and assist youth fellowships within churches of its locality.
+c.
+To coordinate the activities of youth fellowship of churches within the Association
+d.
+To initiate other programs and activities that will promote the welfare of the fellowships.
+e.
+To promote and execute Youth Ministry decisions and programs.
+14
+C.
+Horizontal Structure of the Youth Ministry
+The Youth Ministry, at the horizontal level, shall be operated through the overall Youth Ministry and its sub-groups as follows:
+•
+The Youth Ministry
+•
+Baptist Young Men (BYM)
+•
+Baptist Young Ladies (BYL), and
+•
+The National Union of Baptist Students (NUBS).
+Section III: The Structure of the Baptist Young Men and Baptist Young Ladies
+The Baptist Young Men (BYM) and Baptist Young Ladies (BYL) shall operate the same vertical structure as the Youth Ministry.
+Notwithstanding, the Baptist Young Men (BYM) and Baptist Young Ladies (BYL) shall operate their structures under the guidance of their respective apex auxiliaries.
+Section IV: The Structure of the National Union of Baptist Students (NUBS)
+The National Union of Baptist Students (NUBS) shall be the official Baptist Students’ Ministry or Fellowship found primarily at Tertiary Level Educational Institutions and secondarily, at Secondary Level Schools.
+At the Tertiary Level, the Baptist Students’ Ministry or Fellowship shall be referred to as NUBS. At the Secondary Level, the Baptist Students’ Ministry or Fellowship shall be referred to as J-NUBS.
+The sub-group, the National Union of Baptist Students (NUBS) shall be found predominantly at the National Level of the Youth Ministry.
+A school or campus ministry may be found at the Local Church Level, where applicable; that is, where a local church may have a youth executive (or leadership support) role that oversees students who belong to a local church.
+15
+ARTICLE 7: OFFICERS
+Figure 3: Elected Officers across the Horizontal Levels of the Youth Ministry
+Note: * - Changes every year
+** - As per the number of sectors operated by the Ghana Baptist Convention
+*** - As defined per the need of the local church
+Section I: Desirable Spiritual, Moral, and Ethical Qualities for Officers
+Scriptural Foundation: "Let no one look down on you because of your youth, but set an example for the believers in speech, in conduct, in love, in faith, and in purity." — 1 Timothy 4:12
+Preamble:
+In accordance with 1 Timothy 4:12, we expect all youth leaders to set exemplary standards for the members of the youth ministry. These qualities ensure that young leaders are models of Christian virtue and effective stewards of their responsibilities.
+16
+1.
+Faith and Commitment
+Strong Faith in God: Every executive must have a personal and growing relationship with Jesus Christ, demonstrated through regular prayer, Bible study, and worship. (Matthew 6:33; John 15:4)
+2.
+Moral Integrity
+Exemplary Conduct: Executives must live lives that reflect the moral standards of Christianity, exhibiting integrity, honesty, and purity. (1 Timothy 4:12; Philippians 2:15)
+3.
+Leadership by Service
+Servant Leadership: Executives should demonstrate a heart for service, following the example of Christ who came to serve. (Mark 10:45; Matthew 23:11)
+4.
+Sound Doctrine
+Commitment to Biblical Teaching: Executives must uphold and teach sound doctrine, ensuring all ministry activities are grounded in Scripture (Titus 1:9; 2 Timothy 3:16) and the Baptist faith.
+5.
+Love and Compassion
+Loving Attitude: Executives must demonstrate Christ-like love and compassion towards others, promoting unity and caring for the needs of the community. (John 13:34; 1 Peter 3:8)
+6.
+Wisdom and Discernment
+Spiritual Wisdom: Executives should seek and display wisdom and discernment in their decisions and actions, relying on the guidance of the Holy Spirit. (James 1:5; Proverbs 9:10)
+17
+7.
+Accountability
+Accountable to God and Others: Executives must be willing to be held accountable for their actions, both to God and to their fellow believers. (James 5:16; Romans 14:12)
+8.
+Ethical Commitment
+a.
+Defend the Interests of the Youth Ministry: Executives must be willing to work in and defend the interests of the youth ministry. (Philippians 2:4)
+b.
+Selfless Dedication and Commitment: Executives should demonstrate selfless dedication and commitment to the work of the ministry. (Colossians 3:17; Galatians 6:9)
+9.
+Church Membership
+Belong to a Local Baptist Church: Executives must be active members of a local Baptist church affiliated with the Ghana Baptist Convention. (Hebrews 10:24-25)
+Conclusion:
+These spiritual, moral, and ethical qualities ensure that all executives of the youth ministry lead by example, uphold Christian values, and guide the ministry in a manner that honors God and serves the community faithfully. By embodying these principles, executives will set a positive example and be above reproach, ensuring no one looks down upon them because of their youth.
+a. Special Election Clause:
+In the event of elections, these qualities shall be deemed as essential qualifications for candidates.
+Section II: Elected and Mandated Officers
+The Youth Ministry shall operate primarily through its Elected Officers.
+The Elected Officers shall serve through the vertical and horizontal levels, as follows:
+•
+Local Church Level – Local Church Executives
+•
+Sub-group Level – Auxiliary Executives
+18
+•
+Association Level – Association Executives
+•
+Sector Level – Sector Executives
+•
+National Level – National Executive Officers (NEO)
+a. Qualifications for President and Vice President
+Given the age bracket of the youth ministry (17 to 35 years), and recognizing that a large majority may not yet have significant leadership, executive or senior management experience, the following qualifications have been streamlined to ensure inclusivity while promoting leadership excellence in a progressive manner:
+1.
+Service and Commitment:
+a)
+Demonstrable progressive leadership growth through service in supporting capacities within the local church’s youth ministry, the local church, outside the church, and/or for other para-church organization and charitable causes.
+b)
+Working knowledge of the youth ministry and its structure. This shall apply to persons desiring to hold the office at the zonal, association, sector, and national levels.
+2.
+Leadership Experience:
+a)
+Demonstrable prior skills and knowledge relevant to leadership roles.
+b)
+Minimum of 1 to 2 years of leadership experience in any youth group (within or outside of the youth ministry).
+c)
+The above shall not be applicable to:
+i.
+A Church or youth ministry with less than 3 years of existence or less than 3 years of being organized.
+ii.
+Circumstances where an entirely new executive team is constituted following the replacement of the previous executive team due to abandonment, failure, or extraneous circumstances such as schooling, traveling, etc. such that elections could not be conducted for a formal and structured transition and/or handing over between the previous and new executive body.
+19
+3.
+Academic Qualifications:
+a)
+The minimum academic qualifications at the local church level shall be a Senior High/Secondary School Education (SSS / SHS), a National Vocational Training Institute (NVTI) certificate, a National Craftsman's Certificate (NCC), or a National TVET Qualification Framework (NTVETQF).
+b)
+Beyond the local church level, the following tertiary education certifications or their equivalents shall be applicable progressively as follows:
+i.
+Minimum of a diploma at the zonal and association levels.
+ii.
+Minimum of a postgraduate diploma at the sector level.
+iii.
+Minimum of a first degree at the national level.
+4.
+Professional Qualifications:
+a)
+Certification or evidence of continuous education, learning, and/or professional development, especially leadership development programme offered by the Convention and the Youth Ministry.
+b)
+Membership of and/or affiliation to a vocational association and professional organization.
+c)
+Evidence of higher educational qualifications in any academic field and/or fields related to management, leadership, governance, and/or administration would be advantageous.
+By establishing these qualifications, we ensure that all potential candidates have the opportunity to develop their leadership skills progressively and are equipped to provide high-level leadership progressively within the youth ministry.
+b. Roles, Functions, and Qualifications of Officers
+1.
+The Youth President
+The President shall:
+a.
+Be and serve as the principal leader of the Youth Ministry, overseeing its activities, operations, and initiatives.
+20
+b.
+Advocate for and oversee the welfare and advancement of the Youth Ministry, promoting its mission and objectives.
+c.
+Preside over meetings of executive officers and business meetings or Annual Conference sessions, ensuring productive discussions and decision-making.
+d.
+Act on behalf of the executive officers in official capacities, representing the ministry at local, national, and international meetings and conferences.
+e.
+Serve as an ex-officio member of all committees and boards, contributing expertise and insight to their deliberations, except the Nomination & Election Committee.
+f.
+Maintain oversight of the ministry's financial matters, including being the principal signatory to bank accounts and authorizing financial transactions.
+g.
+Work collaboratively with local, association, auxiliary, and national officers, ensuring alignment between local, association, and national youth ministry initiatives and objectives.
+h.
+Consult with relevant stakeholders, including the respective Governance and Administrative Support officers or equivalent, to ensure effective coordination and implementation of ministry programs and initiatives.
+i.
+Be a Signatory to the Ministry’s Bank Accounts.
+2.
+The Vice President
+The Vice President shall undertake the following responsibilities:
+a.
+Leadership Support: Assist the President in the discharge of duties and act on behalf of the President, in their absence or at their request. Provide leadership and direction to the executive team, ensuring alignment with the ministry’s vision and goals.
+b.
+Meeting Facilitation: Preside over executive meetings and other official gatherings in the absence of the President. Ensure that meetings are productive, with clear agendas and follow-up actions.
+c.
+Committee Coordination: Act as the coordinator for all committee works, ensuring tasks are completed efficiently and objectives are met.
+21
+d.
+Facilitate communication and collaboration among different committees, sectors, and sub-groups.
+e.
+Liaison and Representation: Serve as a liaison between the Youth Ministry and its respective sub-group. Represent the ministry at internal and external meetings, conferences, and events where required or as directed.
+f.
+Special Projects: Oversee special projects and initiatives as assigned by the President or the Executive. Provide oversight and guidance to ensure the successful of these projects. Be the principal strategic executor of all initiatives of the ministry and/or sub-group.
+g.
+Perform any other duties as assigned by the President or the Executive Committee, contributing to the overall effectiveness and success of the Youth Ministry.
+3.
+General Secretary:
+The duties of the General Secretary shall be to:
+a.
+Possess preferably a tertiary, professional, or postgraduate qualification in at least one of the following: Administration, Management, Communications, Secretaryship, or any related discipline.
+b.
+Alternatively, demonstrate competency in, or possess a background, experience, and/or exposure to, administration, business management, business analysis, communication, journalism or marketing.
+c.
+Possess or demonstrate a proven background, competency, experience, and/or exposure in an administrative or secretarial role.
+d.
+Conduct official correspondence and negotiations for the Youth Ministry and/or sub-group in consultation with the President.
+e.
+Collect, keep, and preserve in custody all relevant documents, records of correspondence, statistics, and other valuable documents of the Youth Ministry and/or sub-group.
+f.
+Keep true and accurate minutes of all proceedings of the Executive meetings, business meetings, and Annual Conferences in their appropriate minute books.
+22
+g.
+Receive and collate submissions from Executives, Committees, Fellowships, and/or Associations/Sectors for the preparation of periodic or annual reports.
+h.
+Be a Signatory to the Ministry’s Bank Accounts.
+i.
+Perform any other duties as the Executive Committee may direct.
+4.
+Financial Secretary
+The Financial Secretary shall:
+a.
+Possess preferably a tertiary, professional, or postgraduate qualification in at least one of the following: Financial Accounting, Management Accounting, Accounting, Accounting with Computing, Economics, Banking & Finance, or any finance/accounting-related qualification.
+b.
+Alternatively, demonstrate competency in, or possess a background, experience, and/or exposure to, financial recording, accounting, and/or financial reporting.
+c.
+Possess or demonstrate a background, competency, experience, and/or exposure in cash handling practices, basic bookkeeping, finance recording, and/or accounting.
+d.
+Be the Treasurer and principally be responsible for receiving, holding, and disbursing all funds of the Ministry either via cash, cheques and/or digital payments.
+e.
+Principally be responsible for collecting, keeping, and preserving in custody all relevant financial documents, records of disbursement and receipts, statistics, and other valuable financial documents of the Youth Ministry.
+f.
+Keep true and accurate records of all financial transactions in their appropriate accounting ledgers.
+g.
+Be responsible for the overall financial reporting and health of the Ministry and shall oversee all financial transactions of the Ministry.
+h.
+Be a Signatory to the Ministry’s Bank Accounts.
+i.
+Perform any other duties as assigned by Executives.
+23
+5.
+Organizing, Prayer & Evangelism Secretary
+This role combines elements of organization, spiritual development, and evangelistic outreach, ensuring a holistic approach to ministry activities and goals.
+The Organizing, Prayer & Evangelism Secretary shall:
+a.
+Lead in the general organization of the Youth Ministry, ensuring smooth functioning and coordination of activities.
+b.
+Plan and organize ministry programs and activities as well as publicize and mobilize membership participation.
+c.
+Maintain a register of all major ministry activities.
+d.
+Coordinate the setup of ad-hoc sub-committees to support the organization of programs and activities.
+e.
+Collaborate with other committees to prepare the grounds for all programs.
+f.
+Oversee protocol arrangements for all programs.
+g.
+Facilitate prayer and spiritual development initiatives within the ministry, encouraging active participation and engagement.
+h.
+Promote and facilitate evangelistic efforts, encouraging members to engage in outreach activities and sharing the Gospel.
+i.
+Serve as a member of the Communications & Public Relations Committee, contributing to the effective communication and promotion of ministry events and initiatives.
+j.
+At the national level only, collaborate with the Sector Youth Coordinators, ensuring alignment with the National Youth Ministry Agenda at the sector and association levels.
+k.
+Perform any other duties as assigned by the executive, contributing to the overall success and effectiveness of the Youth Ministry.
+24
+6.
+Communications and Public Relations Officer
+The Communications and Public Relations Officer shall undertake the following duties:
+a.
+Media Management: Oversee and manage all media relations for the Youth Ministry, including maintaining relationships with media outlets and coordinating media coverage of events. Develop and distribute press releases, media kits, and other materials to promote the ministry’s activities and initiatives.
+b.
+Communications: Serve as the primary point of contact for all internal and external communications. Develop and implement effective communication strategies to ensure consistent and clear messaging across all platforms. Manage the content and updates for the ministry’s website, social media accounts, and other digital platforms.
+c.
+Public Relations: Enhance the public image of the Youth Ministry through strategic public relations initiatives. Plan and execute public relations campaigns to promote the ministry’s mission and programs. Handle crisis communication and manage the ministry’s reputation during times of challenge or controversy.
+d.
+Publicity: Design and implement publicity campaigns to increase awareness and participation in ministry events and programs. Coordinate the production and distribution of promotional materials, including brochures, newsletters, and flyers. Organize and manage the publicity of events, such as press conferences, community outreach programs, and special events.
+e.
+Event Support: Assist in planning and publicizing ministry events, ensuring they receive adequate media coverage and community engagement. Collaborate with other ministry leaders to ensure cohesive and comprehensive promotional strategies for all events.
+f.
+Perform any other duties as assigned by the National Executive Officers (NEO), contributing to the overall communication and public relations strategy of the Youth Ministry.
+25
+g.
+The officer should preferably possess a tertiary, professional, or postgraduate qualification in media relations, communications, public relations, or a related field. Alternatively, the officer should have demonstrated proven experience developing and executing communication and public relations strategies as well as managing traditional, digital, and/or social media platforms and communication tools.
+h.
+The officer should have demonstrated a background, competency, experience, and/or exposure to the following skills: presentation, written and verbal communication, organizational and project management, and proficiency in communication tools, including digital and social media platforms, website and content management systems, graphic design and/or video editing and production.
+Special Executive/Governance Clause/Caveat:
+The roles outlined above, including the National Youth President, Vice President, Sub-group Leaders (BYM, BYL, NUBS), General Secretary, Financial Secretary, Organizing, Prayer, and Evangelism Secretary, and Communications and Public Relations Officer, shall constitute the core mandated officers at all operational levels of the Youth Ministry.
+While these positions are mandatory to ensure consistency and effective governance across the ministry, the introduction of additional roles such as deputies or other officers into the executive may be considered based on specific needs.
+Any such additions must align with the overarching structure and objectives of the Youth Ministry and require two-thirds approval by voting at a respective business meeting (Local Church and Association levels) or National conference/congress to ensure they do not deviate from the established framework.
+This clause is intended to provide definitive guidance and must be adhered to rigorously to maintain uniformity and coherence within the ministry's operations.
+26
+Section III: National Executive Officers (NEO)
+The National Executive Officers (NEO) shall be the elected and mandated officers of the National Youth Ministry and shall collectively be the administrative head of the Ministry. They shall design and formulate policies, programmes, initiatives, and activities of the Ministry.
+The officers shall include:
+i)
+The National Youth President
+ii)
+The Vice President
+iii)
+Sub-group Leaders:
+a.
+Baptist Young Men (BYM)
+b.
+Baptist Young Ladies (BYL)
+c.
+National Union of Baptist Students (NUBS)
+iv)
+General Secretary
+v)
+Financial Secretary
+vi)
+Organizing, Prayer, and Evangelism Secretary
+vii)
+Communications and Public Relations Officer, and
+viii)
+Youth Sector Coordinators
+The specific roles and responsibilities of the above-elected National Executive Officers can be found in Schedule 1 of this constitution.
+The specific roles and responsibilities of the respective sub-group Executive Officers can be found in their respective guidebooks.
+27
+ARTICLE 8: GOVERNANCE AND ADMINISTRATIVE SUPPORT
+A.
+National Youth Coordinator
+The National Youth Coordinator shall:
+a.
+Preferably be a young minister licensed/recognized/ordained approved and appointed by the Ghana Baptist Convention.
+b.
+Be a counselor to the Youth Ministry at the national level in all areas where applicable.
+c.
+Shall promote the spiritual growth of the National Youth Ministry.
+d.
+Attend all major activities, programmes, and conferences of the Youth Ministry.
+e.
+Be a member of the National Advisory Council.
+f.
+Shall serve the NAC under any special referral to him
+B.
+Association Head
+The Association Head shall:
+a.
+Be a reverend minister recognized and approved by the Ghana Baptist Convention.
+b.
+Be a counselor to the Youth Ministry at the association level in all areas where applicable.
+c.
+Shall promote the spiritual growth of the National Youth Ministry.
+d.
+Attend major activities, programmes, and conferences of the Youth Ministry.
+e.
+Perform any other function as may be needed to support the Youth Ministry.
+C.
+Apex Auxiliary Coordinator (BMM and WMU)
+The Apex Auxiliary Coordinator shall:
+a.
+Be appointed by the respective apex auxiliary.
+b.
+Be a counselor to the respective youth sub-group at the respective vertical levels of the sub-group where applicable.
+c.
+Provide guidance for the activities and see to the growth of the respective youth sub-group.
+d.
+Perform any other function as may be needed to support the respective youth sub-group.
+28
+D.
+Local Church Youth Pastor, Patron, or Person-In-Charge of Youth
+The person shall:
+a.
+Be appointed by the Head Pastor, Body of Deacons, or Church Council where applicable.
+b.
+Be a counselor to the Youth Ministry at the local church level in all areas where applicable.
+c.
+Shall promote the spiritual growth of the Youth Ministry at the local churches.
+d.
+Attend major activities, programmes, and conferences of the Youth Ministry.
+e.
+Perform any other function as may be needed to support the Youth Ministry.
+ARTICLE 9: COMMITTEES
+Committee members and all appointments shall be done by the President in consultation with National Executive Officers and presented to the National Advisory Council for Approval.
+Section I: Standing Committees
+i.
+The Youth Ministry in addition to the National Executive Officers shall operate through a council and the other standing or ad-hoc committees.
+ii.
+Members and the Chairperson shall be selected by the Executive Officers in consultation with the National Advisory Council. This shall not be applicable to the establishment of the National Advisory Council.
+iii.
+Committee Members shall be in good standing of any registered and recognized Baptist Youth Fellowship.
+iv.
+The following shall be the standing committees at the National level:
+a)
+National Advisory Council
+b)
+Finance Committee
+c)
+Internal Audit Committee
+d)
+Spiritual and Community Outreach Committee
+e)
+Communications & Public Relations Committee
+f)
+Analytics and Development Committee
+g)
+Disciplinary and Ethics Committee
+29
+Section II: Duties and Responsibilities of Committees
+A.
+National Advisory Council (NAC)
+The NAC shall be the advisory council of the Ministry. It shall seek to advise the NEO on programmes, policies, and activities of the Ministry.
+Its membership shall include:
+•
+All NEO members (13),
+•
+The Immediate Past National Youth President (1) – to provide institutional knowledge and guidance to the incumbent administration,
+•
+The Immediate Past National General Secretary (1) – to provide institutional knowledge and guidance to the incumbent administration,
+•
+The National Youth Coordinator (1),
+•
+The Committee Head for the Analytics and Development Committee (1)
+•
+Up to four (4) co-opted members as decided by the President – to provide guidance and support towards the implementation of the administration’s strategic initiatives.
+•
+The chairperson of the NAC shall be chosen from among the four (4) co-opted members themselves in caucus at the first meeting of the NAC and before the first council meeting. The process shall be under the observation of the National Youth Coordinator.
+The total number of members of and to the NAC shall not exceed twenty-one (21).
+B.
+Finance Committee
+The National Executive Officers shall in consultation with the National Advisory Council set up a finance committee.
+The finance committee shall:
+i.
+Be responsible for the planning, promotion, and administration of sound financial policies and good financial stewardship in the Ministry.
+ii.
+Develop and recommend to the Executive Officers a working financial policy and procedures of fund management.
+iii.
+Develop and recommend an Annual Budget for all activities.
+30
+iv.
+Plan and recommend the Ministry’s budget subscription plan.
+v.
+Conduct studies and recommend to NEO possible sources of income and investments.
+vi.
+Review income and expenditure periodically and recommend necessary adjustments.
+vii.
+Its membership shall comprise the Financial Secretary as Chairperson, a member from NAC, and three other Youth non-executive members with backgrounds, competencies, and experiences in Finance, Accounting, or Auditing.
+viii.
+A recording secretary for the committee shall be chosen from among them.
+C.
+Internal Audit Committee
+The National Advisory Committee shall in consultation with the office of the Christian Education & Auxiliaries and through the Youth Coordinator appoint the internal audit committee who shall:
+i.
+Audit the finances as well as the logistics of the Ministry and make necessary recommendations.
+ii.
+Review the activities of the Finance committee for the purposes of improvement
+iii.
+Review financial records as submitted by the finance committee for the purposes of establishing financial probity.
+iv.
+Review the internal controls and test controls to drive efficiency.
+v.
+Conduct tests of transactions and/or Vet all payments.
+vi.
+Be invited to NAC meetings where appropriate.
+The committee shall be composed of an odd number of persons; a minimum of three (3) or a maximum of five (5). The persons to be nominated to the committee should possess the following background, competence, and experience:
+•
+Understanding and appreciation of internal and risk controls.
+•
+Financial, Accounting, and Auditing background, competence, and experience.
+31
+•
+Possess background, competence, and experience in allied fields and specializations like forensics, fraud, law, etc.
+•
+Should be straightforward, objective, and have integrity.
+•
+Terms of reference of work shall be handed to the members after composition by the NAC.
+•
+No Executive Officer shall be a member of this committee.
+•
+The chairperson of the committee shall be chosen from among the members themselves in caucus at the first meeting.
+D.
+Spiritual and Community Outreach Committee
+This committee shall be known as the Organizing, Prayer, and Evangelism Committee.
+It shall be composed of the Organizing, Prayer, and Evangelism Secretary as chairperson and:
+•
+The Youth Sector Coordinators (at the National Level)
+•
+A chosen youth member from each sector.
+The committee shall be composed of nine (9) persons in total. The committee shall:
+i.
+Be responsible for planning and organizing programs and events within the Youth Ministry.
+ii.
+Be responsible for general organizational setup, planning of programs, and the formation of sub-committees to assist during events. The committee can co-opt other members to support them in the performance of their duties.
+iii.
+Be responsible for the general religious and social needs of the ministry.
+iv.
+Execute the prayer and evangelism mandate of the Youth Ministry.
+v.
+Organize Sector, Association, Zonal and Local Church prayer and evangelism sub-committees (Teams) to effect plans of action and monitor such, for reporting.
+32
+vi.
+Plan the ministry’s social action programs and lead the Ministry to stand against all forms of social injustice and undertake Compassionate Outreach (charitable work to alleviate human suffering amidst/together with missions) such as medical outreach, sport evangelism, prisons outreach, etc.
+vii.
+Educate and mobilize the Ministry to get involved in social action programs and activities that would contribute positively to community development.
+viii.
+Work with the designated Governance and Administrative Support person to undertake leadership development activities (training and seminars) at the respective national/sector, association/zonal, and local church levels.
+E.
+Communications & Public Relations Committee
+1.
+This committee shall be made up of five (5) standing members. The committee shall have the powers to coopt other members to assist them.
+2.
+The following shall be statutory members:
+i.
+Communications & Public Relations Officer as the Chairperson
+ii.
+The Organizing, Prayer, and Evangelism Secretary
+iii.
+A member of the NAC
+iv.
+Two other members with technical knowledge or proficient experience in communication, publicity, protocol, marketing, and traditional, digital and social media.
+3.
+They shall function to:
+a.
+Assist Executive Officers in communicating with members and the public via various avenues, channels, media, etc.
+b.
+The Committee shall develop and implement a comprehensive media and communications strategy to promote the Youth Ministry’s activities, programs, and initiatives.
+c.
+The Committee shall manage public relations efforts to build and maintain positive relationships with the media, stakeholders, and the community.
+d.
+The Committee shall oversee the creation and dissemination of press releases, newsletters, and other public communications materials.
+33
+e.
+The Committee shall oversee the production of high-quality content for various media platforms, including social media, the ministry’s website, and printed publications, and ensure that the content is engaging, accurate, and reflective of the ministry’s values and objectives.
+f.
+The Committee shall coordinate the promotion of Youth Ministry events, ensuring maximum visibility and engagement, and oversee the coverage of events through photography, videography, and live updates on media platforms.
+g.
+The Committee shall serve as an advisory body to the National Executive Officers on matters related to media, communications, and public relations.
+F.
+Analytics and Development Committee
+There shall be established an Analytics and Development Committee as follows:
+i.
+The committee shall provide data-driven insights and research findings that inform the strategic decisions, policies, and programs of the Youth Ministry.
+ii.
+Oversee all activities related to research, data collection, analysis, and the dissemination of findings within the Youth Ministry.
+iii.
+The members and chairperson of the Committee shall be appointed by the National Executive Officers (NEO) in consultation with the National Advisory Council.
+iv.
+The Committee shall consist of a minimum of three (3) and a maximum of five (5) members, all of whom shall possess expertise and experience in research methodologies, data analytics, statistics, or related fields.
+v.
+The Committee shall design and oversee the execution of research projects that align with the strategic objectives of the Youth Ministry.
+vi.
+The Committee shall develop and implement data collection strategies to gather relevant and accurate data on various aspects of the Youth Ministry.
+34
+vii.
+The Committee shall conduct comprehensive data analysis to generate insights and identify trends that support the Youth Ministry's decision-making processes.
+viii.
+The Committee shall utilize appropriate statistical and/or analytical tools to interpret data accurately and effectively.
+ix.
+The Committee shall prepare detailed reports and presentations based on research findings and data analysis.
+x.
+The Committee shall disseminate research findings and data insights to the National Executive Officers, National Advisory Council, and other relevant stakeholders (where applicable) in a timely and accessible manner.
+xi.
+Based on research findings and data analysis, the Committee shall provide evidence-based recommendations to inform the strategic planning, program development, and policy formulation of the Youth Ministry.
+xii.
+The Committee shall collaborate with other committees, departments, and external organizations to enhance research and data capabilities.
+xiii.
+The Committee shall serve as an advisory body to the National Executive Officers on matters related to research and development.
+G.
+Disciplinary and Ethics Committee
+a)
+The Disciplinary Committee shall consist of:
+i.
+A Former National Executive (over 35 years)
+ii.
+A NUBS Alumni (over 35 years)
+iii.
+A Former BYL executive member (over 35 years)
+iv.
+A Former BYM executive member (over 35 years)
+v.
+The National Youth Coordinator
+b)
+The NAC shall be responsible for setting up the Disciplinary Committee.
+c)
+The disciplinary committee as a collective body or individuals shall serve a period of four years, for a maximum of 2 terms.
+35
+d)
+The Disciplinary Committee shall be responsible for the investigation of all allegations of misconduct against member Youth Fellowship, Youth Associations, delegates, members of the Executive Committee and shall recommend appropriate disciplinary measures to the Christian Education and Auxiliaries Director for the necessary action.
+e)
+The Committee shall observe the rules of natural justice in all its deliberations.
+f)
+Where the opinion of the committee based on the preliminary findings does not warrant the full disciplinary process, the following alternative actions may be undertaken in consultation with the NAC and Christian Education and Auxiliaries Director:
+i.
+Informal Resolution: Address the issue through informal means, such as a private conversation, mediation, or counseling session with the involved parties to resolve the matter amicably without formal proceedings.
+ii.
+Issuing a Warning: Provide a written or verbal warning to the individual involved, outlining the concerns and expected changes in behavior without proceeding to a full disciplinary hearing.
+iii.
+Guidance and Training: Recommend or mandate participation in specific training programs or workshops aimed at addressing the behavior or issue identified, promoting better understanding and compliance with the ministry's ethics and disciplinary standards.
+iv.
+Monitoring and Follow-Up: Implement a monitoring period during which the individual's behavior is observed for compliance with expected standards. Follow-up meetings can be scheduled to ensure ongoing adherence to guidelines.
+v.
+Advisory Note: Send an advisory note to the individual, offering advice and suggestions for improvement, while emphasizing the importance of adhering to the ministry’s code of conduct and ethical standards.
+vi.
+Restorative Actions: Suggest restorative actions, such as apologies or restitution, that can help to mend relationships and resolve the issue without escalating to formal disciplinary measures.
+36
+g)
+The Committee shall submit a report of its investigations to the Christian Education and Auxiliaries Director to administer appropriate sanctions.
+h)
+Discipline shall be administered only upon proof and evidence that the misconduct has been committed.
+i)
+Disciplinary measures should be administered to be redemptive other than judgmental.
+j)
+A member under investigation shall cease to hold him/herself in position until outstanding issues are cleared.
+k)
+A disciplined member shall not be eligible for any position within the period of the disciplinary sanction.
+l)
+A member who has been sanctioned following a disciplinary process shall not be eligible for an electoral appointment for a maximum period of two (2) years from the date the sanction was imposed but will be eligible for elections, at the next mandatory elections or bi-elections; whichever comes first. The exact duration shall be determined by the severity of the offense and the recommendations of the Disciplinary and Ethics Committee.
+m)
+All reports of grievances, misconduct, misappropriation, etc. shall be submitted in writing to NAC stating the person(s) involved.
+Section III: Ad-hoc Committees
+1.
+The National Executive Officers may set up ad-hoc committees as they may deem necessary.
+2.
+Each committee so set shall be given clear guidelines, specific tasks, and duration of work, and shall be dissolved accordingly after the fulfillment of their mandate and submission and acceptance of their report by the NEO.
+3.
+Such committees may have the power to setup sub-committees to aid in the discharge of their duties.
+4.
+National Executive Officers shall however set up the mandatory ad-hoc committee of the Nominating & Elections Committee.
+37
+Section IV: Tenure of Office of Officers/Committee Members
+1.
+With the exception of an Administrator and other salaried workers where applicable, the National Executive Officers, National Advisory Council, and all members on committees shall be held for four (4) years and a maximum of two (2) consecutive terms.
+2.
+Members of committees can be appointed to other committees after the end of tenure.
+3.
+All officers/members of committees shall consider their tenure office to have come to an end at the end of the stipulated period.
+4.
+All outgoing officers may be eligible for re-election into the same office or another office for one (1) term (in the case of the same office) or two (2) terms respectively provided their conduct and qualifications merit such position(s).
+ARTICLE 10: ELECTION AND APPOINTMENT OF OFFICERS
+Section I: Nominating & Elections (N&E) Committee
+1.
+The NEO in consultation with NAC shall set up a Nominating and Elections (N&E) Committee six (6) months to the end of every tenure of office.
+2.
+The NEO in consultation with NAC shall set up a Nominating and Elections Committee to conduct a by-election where an executive position becomes vacant within the first half of a serving/stipulated tenure.
+3.
+The following shall be the members of the Nominations and Elections Committee:
+i.
+National Youth Co-ordinator
+ii.
+Two (2) of the Co-opted members from the NAC. One of whom shall serve as the Chairperson.
+iii.
+The Vice President, Secretary of the Committee
+iv.
+Communication and Public Relations Officer
+v.
+All Sectors Youth Coordinators.
+4.
+Where any or all of the NEO above seeks to stand for elections, the NEO in consultation with the NAC shall appoint either a Committee Head or Member to represent the NAC in the process. Likewise, where a sector
+38
+representative (coordinator) seeks to stand for elections, the sector
+representative in conjunction with his/her sector will appoint an alternate to represent the interest of the sector in the process.
+5.
+The NEO shall provide terms of reference of work (i.e. qualifying criteria, minimum standards, etc.) to guide the committee in their work.
+6.
+This committee shall oversee nominations as part of the electoral process and conduct the elections for all national elected officers.
+7.
+The committee shall submit a plan and procedure of elections (Roadmap of Elections) to NEO for presentation to NAC for acceptance one (1) month after the constitution of the committee.
+8.
+The committee shall have six (6) weeks within which to submit the final report to NEO for acceptance after the completion of their mandate.
+9.
+The nominating committee is expected to:
+i.
+Design nominating forms with a section to be endorsed by all of the following:
+Primary Endorser
+Alternate Endorser
+(in the absence of the primary endorser or where the primary endorser is contesting/participating in the electoral process)
+i.
+Sector Head
+ii.
+Association President or an Association Executive (for a youth member who is not association executive)
+a.
+Association Head (to be the primary endorser for the association president and executives aspiring)
+iii.
+Youth President of Local Church
+a.
+Zonal President (where applicable).
+b.
+An association executive
+iv.
+Head Pastor of Local Church (in the absence of the Head Pastor the alternate endorser will be considered)
+a.
+The Chief Deacon
+b.
+The Church Council Chairperson
+c.
+An Associate Pastor
+v.
+Any other youth member at the Local Church of the candidate.
+39
+ii.
+Conduct vetting interviews for all nominees. The final report must show the performance of each nominee.
+iii.
+Publish all names of nominees to various levels of the Ministry: National (and Sector), Association (and Zonal), and Local Churches.
+iv.
+Put up measures that will ensure free and fair election of officers.
+Section II: Elections of Officers
+1.
+All National Executive Officers shall be duly voted on in a secret ballot at an Annual Gathering called for that purpose.
+2.
+The Nominating Committee duly formed under Article 9, Section III:4 of this constitution upon submission of its report, accepted and verified by the National Advisory Council shall set a date for elections.
+3.
+Nominees shall be duly published to each Association and Local Church at least three (3) months before the Elections.
+4.
+Where there is an objection to a nominee's candidacy, the objection shall be presented to the N&E committee in writing at least two (2) months before the date of the Election. The objection shall require the supporting endorsement of at least five (5) members in different churches in good standing across all sectors.
+5.
+The final list of all qualified nominees shall be presented to all local churches and Associations at least one (1) month to the Elections date.
+6.
+Prayer meetings shall be called for this purpose and must be part of the program of activities of the Delegates Congress.
+7.
+Candidates seen to be campaigning shall be disqualified and his/her position declared vacant and to be filled during the Delegates Congress.
+8.
+The Nominating committee in such circumstances shall be made to nominate a different candidate after going through the procedures of nomination.
+9.
+Each Candidate on the day before elections shall be given time to address the delegates on his/her vision and objectives.
+10.
+The N&E committee shall make sure to conduct the election in a free and fair atmosphere.
+40
+11.
+Voting for qualified nominees shall be done in a secret ballot with the winner securing the simple majority of votes cast.
+12.
+In circumstances of a tie amongst nominees a pattern of voting shall be conducted with the winner obtaining a simple majority.
+13.
+The Elected President shall give a valedictory speech on behalf of the elected officers.
+Section III: Induction Ceremony & Handing Over
+1.
+An Induction Ceremony shall be held on the last day of the Delegates Congress for the elected officers.
+2.
+This Service shall be moderated by the President of the Ghana Baptist Convention, or any Minister delegated by the President of Ghana Baptist Convention.
+3.
+Outgoing officers shall hand over all files, properties and documents to the Incoming officers in a meeting called for that purpose.
+4.
+Handing-Over of assets, records, etc. to the newly elected officers shall be done within two (2) weeks after the Induction Ceremony under the observance of the Christian Education and Auxiliaries Director and/or the National Youth Coordinator.
+Section IV: Removal from Office
+The following shall necessitate removal from office;
+1.
+Gross misconduct deemed appropriately so by Christian Baptist Doctrine and values that strictly contravenes societal values and norms.
+2.
+Persistent exhibition of incompetence and lack of will to execute agenda of Youth Ministry.
+41
+A.
+Procedure for Removal from Office
+1.
+Issues raised by a member of misconduct and warrant removal must be clearly spelt out in writing to the NEO and NAC.
+2.
+A member seeking the removal of an officer must secure at least ten (10) consent signatures of the petition from membership across all sectors.
+3.
+The Disciplinary and Ethics Committee shall be mandated to sit on the matter in not less than a month.
+4.
+The officer of whom issues are raised shall be seen to be given fair justice of hearing.
+5.
+If found culpable, the matter shall be put to a special meeting called for that purpose.
+6.
+Decision shall be reached on a two thirds majority of votes.
+ARTICLE 11: STATUTORY PROGRAMS & ACTIVITIES
+Section I: Operations
+1.
+The National Youth Ministry shall act through the Annual Conference-in-session, and in between sessions, shall act through its National Executive Officers, its national Secretariat, its Committees, its Sectors, Associations, Zones and Local fellowships.
+2.
+Notwithstanding the powers vested in the National Executive Officers and its allied Councils and Committees, the Congress/Conference shall be the highest decision body of the Ministry.
+3.
+The Ministry’s year shall begin on 1st January and end on 31st December.
+4.
+Special Emergency Conferences/Congresses can be called by the President at the suggestion of the Council.
+5.
+The quorum of the meeting shall be two-thirds majority of the registered attendees.
+6.
+Any discussion so far accepted shall be binding.
+42
+Section II: Executive Officers and Council Meetings
+1.
+The Executive Officers shall meet once every quarter except emergency meetings.
+2.
+The National Advisory Council shall meet twice every year (preferably in the 1st and 4th Quarter of the year) except for emergencies.
+3.
+One of such meetings shall be of one full day duration.
+4.
+The President may call an extraordinary meeting with the approval of not less than three other members of the Executive Committee.
+5.
+For the purpose of this article, an extraordinary meeting is a meeting that has not been duly fixed at a subsequent preceding meeting.
+6.
+At all levels of the National Youth Ministry, the quorum for the Executive Committee meeting shall be 60% of the members.
+7.
+At all levels of the National Youth Ministry, all decisions of the Executive Committee shall be by a simple majority vote.
+8.
+At all levels of the National Youth Ministry, the President shall have a casting vote at Executive Committee meetings in the event of a tie.
+9.
+Subject to the provisions of this article the Executive Committee at all levels of the National Youth Ministry, shall regulate its own procedures.
+Section III: National Youth Conference
+The National Youth Ministry shall hold National Youth Conferences to:
+1.
+Increase Fellowship amongst the membership.
+2.
+Seek Spiritual Growth and Empowerment for members.
+3.
+Equip and train members for effective leadership
+4.
+Report the progress of the Ministry to members (Business Meeting).
+5.
+Introduce any other programme as may be directed by the National Executive Officers.
+43
+Section IV: National Youth Delegates Congress
+1.
+There shall be a Youth Delegate Congress to be held every four (4) years to appraise members on the functioning of the Ministry.
+2.
+It shall be the electoral congregation of the Ministry.
+3.
+It shall be the final decision-making body of the Ministry.
+4.
+All major decisions shall be made by a simple majority vote.
+5.
+Its composition shall be by three Delegates from each local church as well as all members of NAC and NEO.
+6.
+In circumstances where churches present more than three (3) delegates only three (3) shall be eligible for voting rights.
+7.
+The Annual Youth Delegates Conference shall be mainly for business and any other activity as may be directed by the National Executive Officers.
+Section V: Standing Orders
+The following shall be the regulations and procedures of Special/Business Meetings.
+1.
+All Business meetings of the Delegates Congress and Conferences shall be conducted and recorded in English.
+2.
+Youth Fellowships and Associations shall ensure that delegates sent to the conference in-session can understand and do the business of the conference.
+3.
+During sessions, delegates may have the option to use local languages to explain or express themselves on any point they want to put across for the sake of clarity. This should be supported with interpretation for the sake of recording.
+4.
+The Chairperson/President/Leader shall see to the orderly conduct of the meetings and shall exercise the prerogative to rule out of order all matters irrelevant to the issues.
+5.
+Any member addressing the meeting shall first obtain permission by show of hand. A person thus permitted to address the meeting shall do so through the Leader while standing on his/her feet.
+44
+6.
+Under no circumstances shall a member who is on the floor be interrupted in the speech, safe in the case of making a point of order, a point of correction or a point of information. All such permissions shall be ordered by the Chairperson.
+7.
+Every motion shall be seconded before it is carried. No notice of any motion shall be taken unless seconded.
+8.
+No motion shall be redrawn when seconded, except leave of the Conference.
+9.
+A motion may be amended with the concept of the mover by one (1) or two (2) of the following:
+a.
+The Chairperson shall put the motion to the conference for voting.
+b.
+Deletion of words.
+c.
+Any combination of the above.
+10.
+The Chairperson shall put the Conference/Congress before the meeting.
+11.
+The Chairperson shall declare the result of the decision by show of hands and shall state whether the motion stands or has lost.
+ARTICLE 12: CODE OF DISCIPLINE
+1.
+The Youth Ministry shall at all times seek to instill and maintain discipline among its members.
+2.
+The Youth Ministry recognizes the right to discipline its member Associations, members of its committees and all executives within the Youth Ministry for any case of misconduct.
+3.
+Each Association shall be responsible for disciplining its members.
+4.
+Discipline meted out should be scripture based and should result in the glory of God, the purity of the church the spiritual benefit of its members.
+5.
+Disciplinary measures administered to Youth Officers, Youth Members and Committee members may include admonition, rebuke, suspension or dismissal from office and ex-communication.
+6.
+For the purposes of this article;
+45
+a.
+Admonition “means addressing the offender placing his sin or offence before him exhorting him to greater rectitude.
+b.
+“Rebuke” means a severe from censure involving reproof and shall be administered before executive or disciplinary committee as the case may be.
+c.
+“Suspension” means debarring a member from duties and privileges of the Association or the Executive Committee as the case may be. It may either be for a specific period or indefinitely.
+d.
+In the case of a Church a suspended member may attend the regular Youth meetings. He is automatically stripped of all offices held in the Association, National, etc. until he is restored back to full membership.
+e.
+Excommunication/Dismissal” means a formal exclusion or dismissal from fellowship, or the fellowship of the Association. It shall be the extreme and highest form of discipline to be meted out to Youth Members, Associations, Executive Committee members, etc. and is only reported in cases of peculiar aggravation of when all other means of reclaiming an offender have failed and or usual gravity when he remains impenitent and stubborn and continues to be contumacious.
+ARTICLE 13: CODE OF PRACTICE
+Section I: Bank Account
+1.
+The Youth Ministry shall operate a Bank account at a reputable and accessible bank.
+2.
+The bank at which the Youth Ministry will operate or make its financial transaction shall be determined by the NEO in consultation with the NAC.
+3.
+Signatories to the account shall be the President (Principal), General Secretary, and Financial Secretary. The signatory mandate shall be any two to sign shall validate any withdrawal of money.
+46
+4.
+The Executive Committee shall by a resolution at a regular meeting have the power to change the signatures of previous signatories who are no longer executive members under clause (4) of this article and substitute this with the names and signatures of the new officers with power to sign.
+Section II: Transparency and Accountability of National Executive Officers
+1.
+The NEO in consultation with NAC shall arrange to fill vacancies in the offices of the Youth Ministry and Committees of the Youth Ministry occasioned by transfer, death resignation or removal until elections are held at the Youth Delegates Congress.
+2.
+Any officer convinced that he should resign from his office shall give concrete reason for taking this decision in writing to the NEO which shall prayerfully consider it before resigning.
+3.
+An officer whose resignation is accepted shall immediately handover all documents and equipment pertaining to the office to NEO. The Executive would have to inform the convention of such resignations.
+4.
+Any officer shall by reason of stated misbehavior or incompetency is considered unfit to continue to hold his post and may be removed from office by the following:
+a.
+A petition shall be presented in writing to the executive Committee of the Youth Ministry stating in detail the case against him and or the reason for his removal, with a copy to the officer's concern.
+b.
+The officer concerned shall, within 21 days after receipt of the petition, file a written reply to the NAC explaining or denying the allegation, if he so wishes.
+c.
+Copies of the petition and the reply shall be made available to all the Associations for their prayerful consideration.
+d.
+Within one month after the circulation to the Association, an extraordinary meeting shall be convened to take a decision on it.
+Those meetings shall have the power to call for evidence to help arrive at a fair conclusion.
+47
+ARTICLE 14: AMENDMENTS
+1.
+Any proposal for an amendment to this constitution shall be submitted in writing with reason to the secretary or president of the Youth Ministry at least three months before the Annual Youth Delegate Conference.
+2.
+Any proposal for an amendment to this constitution shall be signed by the proposer and supported by not less than five members from at least five different Youth fellowships within that Association.
+3.
+The Secretary shall circulate details of the proposed amendment to the Associations for consideration two months before the Annual Conference.
+ARTICLE 14: COMMENCEMENT
+The Constitution came into effect on Saturday 18th June, 2024.
+48
+SCHEDULE
+Section 1: Duties and Responsibilities of National Executive Officers (NEO)
+A. The National Youth President
+The President shall:
+a.
+Be the principal Officer Elected by the National Youth Ministry.
+b.
+See to the general welfare and promote the work & mandate of the Baptist Youth Ministry.
+c.
+Preside over Annual Conference sessions and Executive Officers meetings.
+d.
+Act generally in any official capacity on behalf of the Executive Officers.
+e.
+Represent the ministry at the other National and International meetings and conferences. The President may attend with the General Secretary if necessary.
+f.
+Be an ex-officio member of all committees/boards except the Nomination & Election Committee.
+g.
+Be a signatory to the Bank accounts and financial transactions of the Youth Ministry.
+h.
+Shall work in consultation with the National Youth Coordinator at the office of the Ghana Baptist Convention.
+B. Vice President
+There will be a Vice President assisting the President in the discharge of duty. The Vice President shall:
+a.
+Preside over the executive team and meetings in the absence or at the request of the President.
+b.
+Oversee Sectors through collaboration with the Sector Coordinators.
+c.
+Be the coordinator of all committee works.
+d.
+Attend to any other duties assigned by the NEO/NAC.
+49
+C. Sub-Group Representative – Baptist Young Men (BYM)
+The BYM Representative shall:
+a.
+Be the elected or appointed representative of the Baptist Young Men Ministry.
+b.
+Ensure the promotion and promulgation of the Baptist Young Men across all levels (vertical and horizontal) of the Youth Ministry.
+c.
+Encourage young men to participate in the activities of the BYM and Youth Ministry and take up leadership roles across sectors, associations, and local fellowships.
+d.
+Perform any duty assigned by the NEO/NAC.
+D. Sub-Group Representative – Baptist Young Ladies (BYL)
+The BYL Representative shall:
+a.
+Be the elected or appointed representative of the Baptist Young Ladies (BYL).
+b.
+Ensure the promotion and promulgation of the Baptist Young Ladies across all levels (vertical and horizontal) of the Youth Ministry.
+c.
+Encourage young ladies to participate in the activities of the BYL and Youth Ministry and take up leadership roles across sectors, associations, and local fellowships.
+d.
+Perform any duty as assigned by the NEO/NAC.
+E. Chairperson – National Union of Baptist Students (NUBS)
+The NUBS Chairperson shall:
+a.
+Be the elected National Chairperson of the National Union of Baptist Students (NUBS).
+b.
+Ensure the promotion and promulgation of the National Union of Baptist Students (NUBS) including JNUBS across all its respective levels.
+c.
+Encourage prospective and existing baptist students entering secondary and/or tertiary education to participate in the activities of the JNUBS and NUBS, respectively.
+50
+d.
+Encourage graduating Baptist students from the secondary and/or tertiary levels of education to participate in the activities of their respective local churches and youth fellowships.
+e.
+Be the chief liaison between the students/campus fellowship/ministry and the Youth Ministry.
+f.
+Attend to duties assigned to him/her by the NEO/NAC.
+F. General Secretary
+The duties of the General Secretary shall be as follows:
+a.
+The General Secretary shall be responsible for ensuring the official communication, administration and coordination of the Youth Ministry.
+b.
+He/she shall possess a qualification, background, experience and/or exposure in at least one of the following: Financial Accounting, Management Accounting, Accounting, Accounting with Computing, Economics, Banking & Finance, or any finance/accounting-related qualification.
+c.
+Conduct official correspondence and negotiations for the Youth Ministry in consultation with the President.
+d.
+Collect, keep, and preserve in custody all relevant documents, records of correspondence, statistics, and other valuable documents of the Youth Ministry.
+e.
+Keep true and accurate minutes of all proceedings of the Executive of the Annual Conference and Executive Committee meetings in their appropriate minute books.
+f.
+Perform any other duties as the Executive Committee may direct.
+g.
+Receive annual reports from Youth Fellowships and Associations.
+51
+G. Financial Secretary
+The duties of the Financial Secretary shall be as follows:
+a.
+The Financial Secretary shall be responsible for the overall financial reporting and health of the Ministry and shall oversee all financial transactions of the Ministry.
+b.
+He/she shall possess a qualification, background, experience and/or exposure in at least one of the following: Financial Accounting, Management Accounting, Accounting, Accounting with Computing, Economics, Banking & Finance, or any finance/accounting-related qualification.
+c.
+Receive, hold, and disburse all monies, cheques, or funds of any kind.
+d.
+Collect, keep, and preserve in custody all relevant financial documents, records of disbursement and receipts, statistics, and other valuable financial documents of the Youth Ministry.
+e.
+Keep true and accurate records of all financial transactions in their appropriate accounting ledgers.
+f.
+Be the Signatory to the Ministry’s Bank Accounts.
+g.
+Perform any other duties as assigned by NEO.
+H. Organizing, Prayer & Evangelism Secretary
+The Organizing, Prayer & Evangelism Secretary shall:
+a.
+Lead in the general organization of the Youth Ministry, ensuring smooth functioning and coordination of activities.
+b.
+Plan and organize ministry programs and activities as well as publicize and mobilize membership participation.
+c.
+Maintain a register of all major ministry activities.
+d.
+Coordinate the setup of sub-committees to support the organization of programs and activities.
+e.
+Facilitate prayer and spiritual development initiatives within the ministry, encouraging active participation and engagement.
+f.
+Promote and facilitate evangelistic efforts, encouraging members to engage in outreach activities and sharing the Gospel.
+52
+g.
+Serve as a member of the Communications & Public Relations Committee, contributing to the effective communication and promotion of ministry events and initiatives.
+h.
+At the national level only, oversee the Sector Youth Coordinators, ensuring alignment with the National Youth Ministry Agenda at the sector and association levels.
+i.
+Perform any other duties as assigned by the executive, contributing to the overall success and effectiveness of the Youth Ministry
+I. Communications and Public Relations Officer
+The Communications and Public Relations Officer shall undertake the following duties:
+a.
+Media Management: Oversee and manage all media relations for the Youth Ministry, including maintaining relationships with media outlets and coordinating media coverage of events. Develop and distribute press releases, media kits, and other materials to promote the ministry’s activities and initiatives.
+b.
+Communications: Serve as the primary point of contact for all internal and external communications. Develop and implement effective communication strategies to ensure consistent and clear messaging across all platforms. Manage the content and updates for the ministry’s website, social media accounts, and other digital platforms.
+c.
+Public Relations: Enhance the public image of the Youth Ministry through strategic public relations initiatives. Plan and execute public relations campaigns to promote the ministry’s mission and programs. Handle crisis communication and manage the ministry’s reputation during times of challenge or controversy.
+d.
+Publicity: Design and implement publicity campaigns to increase awareness and participation in ministry events and programs. Coordinate the production and distribution of promotional materials, including brochures, newsletters,
+53
+and flyers. Organize and manage the publicity of events, such as press
+conferences, community outreach programs, and special events.
+e.
+Event Support: Assist in planning and publicizing ministry events, ensuring they receive adequate media coverage and community engagement. Collaborate with other ministry leaders to ensure cohesive and comprehensive promotional strategies for all events.
+f.
+Perform any other duties as assigned by the National Executive Officers (NEO), contributing to the overall communication and public relations strategy of the Youth Ministry.
+g.
+The officer should preferably possess a tertiary, professional, or postgraduate qualification in media relations, communications, public relations, or a related field. Alternatively, the officer should have demonstrated proven experience developing and executing communication and public relations strategies as well as managing traditional, digital, and/or social media platforms and communication tools.
+h.
+The officer should have demonstrated a background, competency, experience, and/or exposure to the following skills: presentation, written and verbal communication, organizational and project management, and proficiency in communication tools, including digital and social media platforms, website and content management systems, graphic design and/or video editing and production.
+J. Youth Sector Coordinators
+a.
+There shall be Youth Sector Coordinators responsible for each of the sectors of the Ghana Baptist Convention.
+b.
+Youth Sector Coordinators are and shall serve as deputy organizing secretaries who are responsible for assisting the Organizing Secretary in executing the National Youth Ministry Agenda at the sector and association levels.
+c.
+Youth Sector Reps shall be members of good standing and very active in the activities of their local churches and their local Youth Associations.
+54
+d.
+Upon the recommendation of the Executive Committee, the reps shall be nominated or proposed by their respective sectors. That is, the Youth Associations within their various Sectors.
+e.
+The Presidents of the various Youth Associations within the Sectors shall do the nomination or proposal of the candidate.
+f.
+The Youth Sector Reps shall execute the mandate of the youth ministry by co-ordinating activities and programs in consultation with the Youth Association Presidents within their respective areas of jurisdiction.
+g.
+They shall present quarterly reports of activities and programs of their sectors to the Vice President and the Organizing, Prayer & Evangelism Secretary.
+h.
+They shall perform every duty or assignment on behalf of the National Youth Ministry in their respective sectors.
+55
+CONSTITUTIONAL NOTES
+Section I: Educational and Professional Qualifications for Officers
+The previous constitution did not have educational and professional qualifications for the roles of officers. However, the revised constitution has introduced various such qualifications, given that times have changed. What reasons or justifications have accounted for the new introduction?
+The introduction of educational and professional qualifications for officer roles in the revised constitution is a practical update reflecting the evolving needs and expectations within the church and denomination’s youth ministry. Below are some of the reasons for the introduction of the educational and professional qualifications for officer roles:
+1.
+Increased Responsibilities and Complexity: As the youth ministry grows and evolves, roles may demand more sophisticated skills in areas like financial management, event organization, and communication. Setting qualifications ensures that officers are equipped to handle these evolving responsibilities effectively.
+2.
+Enhanced Accountability and Professionalism: Officers with relevant education and experience bring a relatively higher level of professionalism and accountability to their roles. This professionalism can help build trust within the ministry and establish credibility, particularly when managing resources or coordinating with external organizations.
+3.
+Alignment with Broader Church Standards: Many churches and ministries now emphasize qualifications for leadership roles to maintain consistent standards. Setting criteria aligns the youth ministry’s leadership expectations with broader church or denominational policies, promoting uniformity.
+56
+4.
+Improving Ministry Effectiveness: Qualified individuals bring specialized knowledge that can improve operational efficiency and decision-making. For example, a Financial Secretary with a background in finance is better equipped to manage budgets, while a secretary with organizational skills can improve administrative functions.
+5.
+Preparing Future Leaders: By encouraging educational and professional development, the youth ministry fosters a culture of growth. This approach motivates young members to gain skills that benefit both their ministry roles and careers, building a capable pipeline of future leaders.
+6.
+Meeting Contemporary Challenges: Modern ministries often encounter challenges like digital communication, financial transparency, and outreach in complex social contexts. Officers with specific qualifications are better prepared to navigate these contemporary issues and represent the ministry well.
+7.
+Reflecting Changing Times and Expectations: As society places greater value on formal education and professional expertise, the ministry’s expectations for leadership qualifications demonstrate adaptability to current norms and standards, ensuring the ministry remains relevant and respected.
+In summary, these qualification requirements are a forward-looking measure to enhance the youth ministry’s effectiveness, professionalism, and alignment with modern expectations, all of which ultimately support its mission and growth.
+57
+Section II: The Merged Role of the Organizing, Prayer, and Evangelism Secretary
+Why the merger of two previous roles of the Organizing Secretary and the Prayer and Evangelism Secretary into one – the Organizing, Prayer, and Evangelism Secretary?
+The merger of roles into the new position of Organizing, Prayer, and Evangelism Secretary in a church’s National Youth Ministry is justifiable on several practical and mission-aligned grounds. Below is a summary of key points that support this merger, especially in light of the church’s spiritual focus on evangelism and prayer:
+1. Alignment with the Core Mission of the Church:
+•
+Given that the church’s primary mission is to foster spiritual growth, evangelism, and prayer, a role that unites these functions ensures alignment with its foundational purpose.
+•
+By centering the principal organizational role around prayer and evangelism, the ministry reinforces these activities as its guiding priorities, emphasizing their importance to members.
+2. Efficiency and Focused Leadership:
+•
+Combining responsibilities for organizing, prayer, and evangelism creates a more streamlined structure, reducing potential overlap between multiple roles.
+•
+This merger allows one individual to oversee and integrate planning, prayer activities, and outreach initiatives, creating a cohesive approach and focused leadership in promoting the church’s mission.
+3. Holistic Programming and Event Coordination:
+•
+With the same person coordinating both logistical aspects and spiritual objectives - events and programs can better integrate worship, prayer, and evangelistic activities.
+•
+For instance, evangelistic events can be planned with accompanying prayer support, while outreach initiatives are managed in harmony with other ministry activities, maximizing their impact.
+58
+4. Increased Accountability and Ownership:
+•
+A single, unified role centralizes accountability, as one person is responsible for driving both spiritual activities and logistical organization.
+•
+This focused accountability can lead to a stronger sense of ownership and dedication to the role, improving the consistency and quality of initiatives across levels.
+5. Enhanced Engagement and Participation:
+•
+Merging these roles encourages a model where organizational efforts are inherently spiritual and mission-driven, fostering a culture where members see planning, prayer, and evangelism as integrated parts of their involvement.
+•
+This holistic approach can make ministry work more engaging and meaningful, as members participate in activities that simultaneously advance personal faith and outreach goals.
+6. Resource Optimization:
+•
+By consolidating these responsibilities, the ministry can use its human and financial resources more effectively, reducing redundancy and ensuring that efforts are concentrated in areas with the greatest spiritual and organizational impact.
+7. Clarity in Role Expectation:
+•
+A merged role reduces the potential for confusion regarding responsibilities, as it centralizes planning, prayer, and outreach functions under one clear position.
+•
+This clarity can enhance collaboration, as members know exactly who to approach for activities related to ministry organization, prayer initiatives, and evangelism.
+59
+In essence, the creation of an Organizing, Prayer, and Evangelism Secretary role ensures that the ministry’s operational leadership is deeply rooted in its spiritual mission. This merger supports a structure where logistical coordination is seamlessly connected with the ministry’s purpose of spiritual growth and outreach, fostering a unified and mission-centric approach to leadership across all levels of the youth ministry.
+Section III: Spiritual and Community Outreach Committee
+Why was the name of this committee changed from the Prayer, Evangelism, and Social Action to the Spiritual and Community Outreach Committee (Organizing, Prayer, and Evangelism Committee)?
+The ideal name for the committee that oversees activities relating to prayer, evangelism, and a combination of social action and charitable work would be the "Spiritual and Community Outreach Committee."
+Reasoning:
+Holistic Coverage: The name "Spiritual and Community Outreach Committee" effectively encompasses a broad range of responsibilities, including spiritual activities (prayer and evangelism) and community-focused initiatives (social action and charitable work).
+Clarity of Purpose: It communicates the dual focus of the committee: nurturing the spiritual well-being of the ministry's members and engaging in outreach activities to support and uplift the community.
+Inclusiveness: The term "Outreach" implies reaching out both spiritually and socially, making it inclusive of all the intended activities.
+Alignment with Mission: The name aligns with the ministry's mission to promote spiritual growth and social responsibility among its members.
+This name ensures that the committee's role is clearly understood and highlights its comprehensive approach to both spiritual and social responsibilities.
+        `;
+        // -------------------------------------------------------------
+        
+        // --- IMPORTANT: PASTE THE FULL MEETING SUMMARY HERE ---
+        const meetingTranscript = `
+            <h3>Summary of the Leadership Prep Meeting</h3>
+            <br>
+            <strong>1. The Constitution's Foundation and Purpose</strong>
+            <p>The Youth Ministry's constitution is designed to unify all youth groups (BYM, BYL, NUBS) under a single vision, inspired by the Ghana Baptist Convention's framework for ages 17–35. It's built on a strong biblical foundation, referencing scriptures like Titus 2 and Joel 2 to emphasize mentorship, sound doctrine, and the empowerment of youth.</p>
+            <br>
+            <strong>2. Core Principles of the Ministry</strong>
+            <ul>
+                <li><strong>Unity:</strong> All youth groups operate as one body with a shared mission.</li>
+                <li><strong>Mentorship:</strong> A clear structure for older members and parent ministries (Men's Ministry, WMU) to guide younger ones.</li>
+                <li><strong>Holistic Growth:</strong> Focus on spiritual, physical, and mental development.</li>
+                <li><strong>High Standards:</strong> Leaders are expected to be Spirit-led, accountable, and demonstrate integrity, compassion, and wisdom.</li>
+            </ul>
+            <br>
+            <strong>3. Key Articles and Structures</strong>
+            <ul>
+                <li><strong>Aims (Article 4):</strong> The ministry is mandated to promote growth and fulfill the five-fold ministry: worship, fellowship, discipleship, service, and evangelism.</li>
+                <li><strong>Membership (Article 5):</strong> Open to active, dues-paying members of a GBC-affiliated church, aged 17–35.</li>
+                <li><strong>Structure (Article 6):</strong> The ministry mirrors the GBC's structure (National, Sector, Association, etc.) and integrates all youth groups, including a NUBS representative on the national executive.</li>
+            </ul>
+            <br>
+            <strong>4. Key Discussion Points (Q&A)</strong>
+            <ul>
+                <li><strong>Dues:</strong> Issues with dues not reaching the national level should be addressed by fixing structural delays, not by penalizing local churches.</li>
+                <li><strong>Age vs. Marital Status:</strong> The ministry is shifting to an age-based definition of "youth" (17-35), but this is a gradual cultural change requiring ongoing consultation with adult ministries.</li>
+                <li><strong>A Living Document:</strong> The constitution is not rigid but a "living document" that requires engagement and adaptation. Leaders must educate members on its principles to ensure it is effective.</li>
+            </ul>
+            <br>
+            <strong>5. Action Items & Next Steps</strong>
+            <ul>
+                <li>Leaders are to share the constitution's principles widely.</li>
+                <li>Address structural challenges in areas like dues collection through better communication.</li>
+                <li>The next session will cover specific leadership roles and processes in detail.</li>
+            </ul>
+        `;
+        // -------------------------------------------------------------
+        
+        // --- IMPORTANT: PASTE YOUR YOUTUBE VIDEO EMBED URL HERE ---
+        const videoEmbedUrl = "https://www.youtube.com/embed/PbpmiP4fyCo?si=V5qzwcra2a6Mj7tq";
+        // -------------------------------------------------------------
+
+        const main = async () => {
+            let app, db, auth, storage;
+            let isFirebaseReady = false;
+
+            try {
+                if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                    storage = getStorage(app);
+                    await signInAnonymously(auth);
+                    isFirebaseReady = true;
+                    console.log("Firebase initialized and user signed in anonymously.");
+                } else {
+                    throw new Error("Firebase config is not valid. Please paste your project credentials.");
+                }
+            } catch (error) {
+                console.error("Firebase initialization failed.", error.message);
+                document.getElementById('firebase-warning').classList.remove('hidden');
+                document.getElementById('notify-container').innerHTML = '<p class="text-red-500">Email submission is currently unavailable.</p>';
+                document.getElementById('feedback-container').innerHTML = '<p class="text-red-500">Feedback submission is currently unavailable.</p>';
+                document.getElementById('view-submissions-btn').style.display = 'none';
+                document.getElementById('view-feedback-btn').style.display = 'none';
+            }
+
+            // --- Gemini API Call Function ---
+            async function callGemini(prompt, retries = 3, delay = 1000) {
+                const apiUrl = '/api/gemini'; // This now points to our secure function
+
+                const payload = { prompt };
+
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        return result.text;
+                    } catch (error) {
+                        if (i === retries - 1) {
+                            console.error("Error calling serverless function:", error);
+                            return "I'm sorry, I'm having trouble connecting right now.";
+                        }
+                        await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                    }
+                }
+            }
+            // --- Constitution AI Logic ---
+            const askConstitutionBtn = document.getElementById('ask-constitution-btn');
+            const constitutionQuestionInput = document.getElementById('constitution-question');
+            const constitutionOutput = document.getElementById('constitution-output');
+            const constitutionLoader = document.getElementById('constitution-loader');
+            const constitutionAnswer = document.getElementById('constitution-answer');
+            
+            askConstitutionBtn.addEventListener('click', async () => {
+                const question = constitutionQuestionInput.value.trim();
+                if (!question) {
+                    alert("Please enter a question about the constitution.");
+                    return;
+                }
+                
+                if (constitutionText.trim().startsWith('PASTE THE ENTIRE')) {
+                     constitutionOutput.classList.remove('hidden');
+                     constitutionAnswer.innerHTML = `<strong class="text-red-500">Error:</strong> The constitution text has not been added to the website's code. This feature cannot work without it.`;
+                     return;
+                }
+
+                constitutionOutput.classList.remove('hidden');
+                constitutionAnswer.textContent = '';
+                constitutionLoader.classList.remove('hidden');
+                askConstitutionBtn.disabled = true;
+
+                const prompt = `You are an AI assistant for the Ghana Baptist Youth Ministry, an expert on its constitution. Your role is to answer questions based ONLY on the provided constitutional text. 
+                Your response must be in two parts, using Markdown for formatting:
+                1.  **Provision in the Constitution:** Quote the most relevant article, section, or clause that answers the question directly. Always cite the specific article number (e.g., "According to **Article 5, Section 2**...").
+                2.  **Interpretation and Application:** Explain what this provision means in simple, practical terms for a youth leader or member.
+                
+                If the answer is not found in the text, you must first state: "There is no specific provision in the constitution that directly addresses this." Then, find the *closest related* provision, quote and cite it, and explain how it might apply to the user's question.
+
+--- CONSTITUTION TEXT START ---
+${constitutionText}
+--- CONSTITUTION TEXT END ---
+
+Based on the constitution above, please answer the following question: "${question}"`;
+                
+                const generatedAnswer = await callGemini(prompt);
+
+                constitutionLoader.classList.add('hidden');
+                let formattedAnswer = generatedAnswer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                formattedAnswer = formattedAnswer.replace(/\n/g, '<br>');
+                constitutionAnswer.innerHTML = formattedAnswer;
+                askConstitutionBtn.disabled = false;
+            });
+            
+            // --- Modal Logic ---
+            const replayModal = document.getElementById('replay-modal');
+            const transcriptModal = document.getElementById('transcript-modal');
+            const videoIframe = document.getElementById('video-iframe');
+            const openReplayBtn2 = document.getElementById('open-replay-btn-2');
+            const openTranscriptBtn = document.getElementById('open-transcript-btn');
+            const closeReplayBtn = document.getElementById('close-replay-btn');
+            const closeTranscriptBtn = document.getElementById('close-transcript-btn');
+
+            const openReplayAction = () => {
+                videoIframe.src = videoEmbedUrl;
+                replayModal.classList.remove('hidden');
+            };
+            
+            if (openReplayBtn2) {
+                openReplayBtn2.addEventListener('click', openReplayAction);
+            }
+
+            if (openTranscriptBtn) {
+                openTranscriptBtn.addEventListener('click', () => {
+                    document.getElementById('transcript-content').innerHTML = meetingTranscript.trim();
+                    transcriptModal.classList.remove('hidden');
+                });
+            }
+
+            const closeModal = (modal) => {
+                modal.classList.add('hidden');
+                if (videoIframe.src) {
+                    videoIframe.src = ""; // Stop video playback
+                }
+            };
+
+            if(closeReplayBtn) closeReplayBtn.addEventListener('click', () => closeModal(replayModal));
+            if(closeTranscriptBtn) closeTranscriptBtn.addEventListener('click', () => closeModal(transcriptModal));
+            if(replayModal) replayModal.addEventListener('click', (e) => e.target === replayModal && closeModal(replayModal));
+            if(transcriptModal) transcriptModal.addEventListener('click', (e) => e.target === transcriptModal && closeModal(transcriptModal));
+
+
+            // --- Existing Page Logic ---
+            const timelineData = [
+                { time: "7:30 PM", title: "Opening (5 mins)", details: "Welcome, prayer, and introduction to the theme and meeting flow." },
+                { time: "7:35 PM", title: "Setting the Tone (5 mins)", details: "Inspirational scripture reading and remarks on the importance of the constitution for leadership." },
+                { time: "7:40 PM", title: "Main Presentation (25 mins)", details: "Exploring the Spirit, Vision, and Purpose of the Constitution from a Kingdom perspective." },
+                { time: "8:05 PM", title: "Interactive Session (15 mins)", details: "Open floor for Q&A, reflections, and discussion on practical applications." },
+                { time: "8:20 PM", title: "Key Takeaways (5 mins)", details: "Summary of main points and a call to action for personal reflection." },
+                { time: "8:25 PM", title: "Closing (5 mins)", details: "Announcements about Part 2 and a final closing prayer." },
+            ];
+
+            const timelineContainer = document.getElementById('timeline-container');
+            timelineData.forEach((item, index) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item mb-8 flex md:justify-between items-center w-full fade-in-section';
+                if (index % 2 !== 0) {
+                    timelineItem.classList.add('flex-row-reverse', 'md:flex-row-reverse');
+                }
+                timelineItem.innerHTML = `
+                    <div class="order-1 md:w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 royal-blue-bg shadow-xl w-8 h-8 rounded-full">
+                        <h1 class="mx-auto font-semibold text-lg text-white">${index + 1}</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-lg shadow-xl w-full md:w-5/12 p-4 cursor-pointer hover:shadow-2xl transition-shadow" onclick="toggleTimeline(this)">
+                        <p class="text-sm font-semibold gold-text">${item.time}</p>
+                        <h3 class="mb-3 font-bold text-gray-800 text-xl">${item.title}</h3>
+                        <div class="timeline-item-content text-sm text-gray-600">
+                            <p>${item.details}</p>
+                        </div>
+                        <div class="text-xs text-right royal-blue-text font-bold mt-2">CLICK TO EXPAND</div>
+                    </div>
+                `;
+                timelineContainer.appendChild(timelineItem);
+            });
+
+            window.toggleTimeline = function(element) {
+                element.parentElement.classList.toggle('open');
+            }
+
+            if (isFirebaseReady) {
+                // --- Notify Me Logic ---
+                const notifyForm = document.getElementById('notify-form');
+                const notifySuccess = document.getElementById('notify-success');
+                const notifyBtn = document.getElementById('notify-btn');
+                const notifyEmail = document.getElementById('notify-email');
+                const notifyWhatsapp = document.getElementById('notify-whatsapp');
+
+                notifyBtn.addEventListener('click', async function() {
+                    const emailValue = notifyEmail.value.trim();
+                    const whatsappValue = notifyWhatsapp.value.trim();
+                    if (emailValue && emailValue.includes('@')) {
+                        notifyBtn.disabled = true;
+                        notifyBtn.textContent = "Saving...";
+                        try {
+                            await addDoc(collection(db, "leadershipSignups"), {
+                                email: emailValue,
+                                whatsapp: whatsappValue,
+                                timestamp: serverTimestamp()
+                            });
+                            notifyForm.classList.add('hidden');
+                            notifySuccess.classList.remove('hidden');
+                            setTimeout(() => {
+                                notifyForm.classList.remove('hidden');
+                                notifySuccess.classList.add('hidden');
+                                notifyEmail.value = '';
+                                notifyWhatsapp.value = '';
+                                notifyBtn.disabled = false;
+                                notifyBtn.textContent = "Notify Me";
+                            }, 4000);
+                        } catch (e) {
+                            console.error("Error adding document: ", e);
+                            alert("Could not save your details. Please try again.");
+                            notifyBtn.disabled = false;
+                            notifyBtn.textContent = "Notify Me";
+                        }
+                    } else {
+                        alert('Please enter a valid email address.');
+                    }
+                });
+                
+                // --- Feedback Logic ---
+                const feedbackForm = document.getElementById('feedback-form');
+                const feedbackSuccess = document.getElementById('feedback-success');
+                const submitFeedbackBtn = document.getElementById('submit-feedback-btn');
+                const feedbackName = document.getElementById('feedback-name');
+                const feedbackText = document.getElementById('feedback-text');
+                
+                submitFeedbackBtn.addEventListener('click', async function() {
+                    const nameValue = feedbackName.value.trim();
+                    const textValue = feedbackText.value.trim();
+                    
+                    if (textValue) {
+                        submitFeedbackBtn.disabled = true;
+                        submitFeedbackBtn.textContent = "Submitting...";
+
+                        try {
+                            await addDoc(collection(db, "feedback"), {
+                                name: nameValue || "Anonymous",
+                                feedback: textValue,
+                                timestamp: serverTimestamp()
+                            });
+
+                            feedbackForm.classList.add('hidden');
+                            feedbackSuccess.classList.remove('hidden');
+                            setTimeout(() => {
+                                feedbackForm.classList.remove('hidden');
+                                feedbackSuccess.classList.add('hidden');
+                                feedbackName.value = '';
+                                feedbackText.value = '';
+                                submitFeedbackBtn.disabled = false;
+                                submitFeedbackBtn.textContent = "Submit Feedback";
+                            }, 4000);
+                        } catch (e) {
+                            console.error("Error adding feedback: ", e);
+                            alert("Could not submit your feedback. Please try again.");
+                            submitFeedbackBtn.disabled = false;
+                            submitFeedbackBtn.textContent = "Submit Feedback";
+                        }
+                    } else {
+                        alert('Please enter your question or comment.');
+                    }
+                });
+
+                // --- Admin View Logic ---
+                const viewSubmissionsBtn = document.getElementById('view-submissions-btn');
+                const submissionsContainer = document.getElementById('submissions-container');
+                const submissionsList = document.getElementById('submissions-list');
+
+                viewSubmissionsBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    submissionsContainer.classList.toggle('hidden');
+                    if (submissionsContainer.classList.contains('hidden')) return;
+                    
+                    submissionsList.innerHTML = '<p>Loading...</p>';
+                    try {
+                        const querySnapshot = await getDocs(collection(db, "leadershipSignups"));
+                        submissionsList.innerHTML = '';
+                        if (querySnapshot.empty) {
+                            submissionsList.innerHTML = '<p>No signups yet.</p>';
+                        } else {
+                            querySnapshot.forEach((doc) => {
+                                const data = doc.data();
+                                const signupEl = document.createElement('div');
+                                signupEl.className = 'p-2 border-b border-gray-600';
+                                signupEl.innerHTML = `<p class="font-bold text-white">${data.email}</p><p>${data.whatsapp || 'No WhatsApp provided'}</p>`;
+                                submissionsList.appendChild(signupEl);
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error fetching submissions: ", error);
+                        submissionsList.innerHTML = '<p>Could not load signups.</p>';
+                    }
+                });
+
+                const viewFeedbackBtn = document.getElementById('view-feedback-btn');
+                const feedbackListContainer = document.getElementById('feedback-list-container');
+                const feedbackList = document.getElementById('feedback-list');
+
+                viewFeedbackBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    feedbackListContainer.classList.toggle('hidden');
+                    if (feedbackListContainer.classList.contains('hidden')) return;
+
+                    feedbackList.innerHTML = '<p>Loading...</p>';
+                    try {
+                        const querySnapshot = await getDocs(collection(db, "feedback"));
+                        feedbackList.innerHTML = '';
+                        if (querySnapshot.empty) {
+                            feedbackList.innerHTML = '<p>No feedback yet.</p>';
+                        } else {
+                            querySnapshot.forEach((doc) => {
+                                const data = doc.data();
+                                const feedbackEl = document.createElement('div');
+                                feedbackEl.className = 'p-2 border-b border-gray-600';
+                                let imageHtml = '';
+                                if (data.imageUrl) {
+                                    imageHtml = `<img src="${data.imageUrl}" alt="Feedback photo" class="max-w-xs rounded-md my-2">`;
+                                }
+                                feedbackEl.innerHTML = `<p class="font-bold text-white">${data.name}</p><p>"${data.feedback}"</p>${imageHtml}`;
+                                feedbackList.appendChild(feedbackEl);
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error fetching feedback: ", error);
+                        feedbackList.innerHTML = '<p>Could not load feedback.</p>';
+                    }
+                });
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                observer.observe(section);
+            });
+
+            const audioToggle = document.getElementById('audio-toggle');
+            const audioIcon = document.getElementById('audio-icon');
+            const music = document.getElementById('background-music');
+            let isPlaying = false;
+
+            audioToggle.addEventListener('click', () => {
+                if (isPlaying) {
+                    music.pause();
+                    audioIcon.textContent = '🔇';
+                } else {
+                    music.play().catch(error => console.log("Audio playback failed. User interaction might be needed first."));
+                    audioIcon.textContent = '🔊';
+                }
+                isPlaying = !isPlaying;
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+</body>
+</html>
