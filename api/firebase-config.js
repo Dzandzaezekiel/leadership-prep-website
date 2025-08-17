@@ -17,6 +17,7 @@ export default function handler(response) {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
   };
 
-  // response.status(200).json(firebaseConfig);
+   response.status(200).json(firebaseConfig);
 }
+
 
