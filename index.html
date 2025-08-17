@@ -376,45 +376,45 @@
         // import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
         // import { getStorage } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 
-        const main = async () => {
-            let app, db, auth, storage;
-            let isFirebaseReady = false;
+        // const main = async () => {
+        //     let app, db, auth, storage;
+        //     let isFirebaseReady = false;
         
-            try {
-                // Fetch the config from our secure API route
-                const response = await fetch('/api/firebase-config');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch Firebase config.');
-                }
-                const firebaseConfig = await response.json();
+        //     try {
+        //         // Fetch the config from our secure API route
+        //         const response = await fetch('/api/firebase-config');
+        //         if (!response.ok) {
+        //             throw new Error('Failed to fetch Firebase config.');
+        //         }
+        //         const firebaseConfig = await response.json();
         
-                if (firebaseConfig.apiKey) {
-                    app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-                    storage = getStorage(app);
-                    await signInAnonymously(auth);
-                    isFirebaseReady = true;
-                    console.log("Firebase initialized and user signed in anonymously.");
-                } else {
-                    throw new Error("Fetched Firebase config is not valid.");
-                }
-            } catch (error) {
-                console.error("Firebase initialization failed.", error.message);
-                document.getElementById('firebase-warning').classList.remove('hidden');
-                // Disable UI elements that depend on Firebase
-                const notifyContainer = document.getElementById('notify-container');
-                if(notifyContainer) notifyContainer.innerHTML = '<p class="text-red-500">Email submission is currently unavailable.</p>';
+        //         if (firebaseConfig.apiKey) {
+        //             app = initializeApp(firebaseConfig);
+        //             db = getFirestore(app);
+        //             auth = getAuth(app);
+        //             storage = getStorage(app);
+        //             await signInAnonymously(auth);
+        //             isFirebaseReady = true;
+        //             console.log("Firebase initialized and user signed in anonymously.");
+        //         } else {
+        //             throw new Error("Fetched Firebase config is not valid.");
+        //         }
+        //     } catch (error) {
+        //         console.error("Firebase initialization failed.", error.message);
+        //         document.getElementById('firebase-warning').classList.remove('hidden');
+        //         // Disable UI elements that depend on Firebase
+        //         const notifyContainer = document.getElementById('notify-container');
+        //         if(notifyContainer) notifyContainer.innerHTML = '<p class="text-red-500">Email submission is currently unavailable.</p>';
         
-                const feedbackContainer = document.getElementById('feedback-container');
-                if(feedbackContainer) feedbackContainer.innerHTML = '<p class="text-red-500">Feedback submission is currently unavailable.</p>';
+        //         const feedbackContainer = document.getElementById('feedback-container');
+        //         if(feedbackContainer) feedbackContainer.innerHTML = '<p class="text-red-500">Feedback submission is currently unavailable.</p>';
         
-                const viewSubmissionsBtn = document.getElementById('view-submissions-btn');
-                if(viewSubmissionsBtn) viewSubmissionsBtn.style.display = 'none';
+        //         const viewSubmissionsBtn = document.getElementById('view-submissions-btn');
+        //         if(viewSubmissionsBtn) viewSubmissionsBtn.style.display = 'none';
         
-                const viewFeedbackBtn = document.getElementById('view-feedback-btn');
-                if(viewFeedbackBtn) viewFeedbackBtn.style.display = 'none';
-            }
+        //         const viewFeedbackBtn = document.getElementById('view-feedback-btn');
+        //         if(viewFeedbackBtn) viewFeedbackBtn.style.display = 'none';
+        //     }
 
     // ... (the rest of your main function continues from here)
     
@@ -2155,4 +2155,5 @@ Based on the constitution above, please answer the following question: "${questi
 </body>
 
 </html>
+
 
