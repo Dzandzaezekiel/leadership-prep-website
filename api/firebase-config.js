@@ -1,6 +1,6 @@
 // /api/firebase-config.js
 
-export default function handler(response) {
+export default function handler(request,response) {
   // Only allow GET requests
   if (request.method !== "GET") {
     return response.status(405).json({ error: "Method not allowed" });
@@ -19,5 +19,6 @@ export default function handler(response) {
 
    response.status(200).json(firebaseConfig);
 }
+
 
 
