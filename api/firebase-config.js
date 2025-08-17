@@ -1,6 +1,6 @@
 // /api/firebase-config.js
 
-export default function handler(request, response) {
+export default function handler(response) {
   // Only allow GET requests
   if (request.method !== "GET") {
     return response.status(405).json({ error: "Method not allowed" });
@@ -17,5 +17,6 @@ export default function handler(request, response) {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
   };
 
-  response.status(200).json(firebaseConfig);
+  // response.status(200).json(firebaseConfig);
 }
+
