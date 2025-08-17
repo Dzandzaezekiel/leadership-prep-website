@@ -351,10 +351,10 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         // --- IMPORTANT: PASTE YOUR FIREBASE CONFIGURATION HERE ---
         // --- IMPORTANT: THIS NOW READS SECURE KEYS FROM VERCEL ---
@@ -367,8 +367,60 @@
         //     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
         //     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
         // };
-        // ---------------------------------------------------------
-        
+        // // ---------------------------------------------------------
+
+        // --- This section will be replaced ---
+        // <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+        import { getStorage } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+
+        const main = async () => {
+        let app, db, auth, storage;
+        let isFirebaseReady = false;
+
+        try {
+            const response = await fetch('/api/firebase-config');
+            const firebaseConfig = await response.json();
+
+            if (firebaseConfig.apiKey) {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            storage = getStorage(app);
+            await signInAnonymously(auth);
+            isFirebaseReady = true;
+            console.log("Firebase initialized and user signed in anonymously.");
+            } else {
+            throw new Error("Fetched Firebase config is not valid.");
+            }
+        } catch (error) {
+            console.error("Firebase initialization failed.", error.message);
+            const warning = document.getElementById('firebase-warning');
+            if (warning) warning.classList.remove('hidden');
+
+            const notifyContainer = document.getElementById('notify-container');
+            if (notifyContainer)
+            notifyContainer.innerHTML = '<p class="text-red-500">Email submission is currently unavailable.</p>';
+
+            const feedbackContainer = document.getElementById('feedback-container');
+            if (feedbackContainer)
+            feedbackContainer.innerHTML = '<p class="text-red-500">Feedback submission is currently unavailable.</p>';
+
+            const viewSubmissionsBtn = document.getElementById('view-submissions-btn');
+            if (viewSubmissionsBtn) viewSubmissionsBtn.style.display = 'none';
+
+            const viewFeedbackBtn = document.getElementById('view-feedback-btn');
+            if (viewFeedbackBtn) viewFeedbackBtn.style.display = 'none';
+        }
+        };
+
+        window.addEventListener("DOMContentLoaded", main);
+        </script>
+    
+
+
         // --- IMPORTANT: PASTE THE FULL TEXT OF THE CONSTITUTION HERE ---
         const constitutionText = `
             1
@@ -1768,8 +1820,9 @@ This name ensures that the committee's role is clearly understood and highlights
             }
 
             // --- Gemini API Call Function ---
+            // --- Gemini API Call Function (Updated for Vercel) ---
             async function callGemini(prompt, retries = 3, delay = 1000) {
-                const apiUrl = '/api/gemini'; // This now points to our secure function
+                const apiUrl = '/api/gemini'; 
 
                 const payload = { prompt };
 
@@ -2102,5 +2155,3 @@ Based on the constitution above, please answer the following question: "${questi
     </script>
 </body>
 </html>
-
-
